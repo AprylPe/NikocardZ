@@ -11,15 +11,16 @@ let collectionsData = {}
 let collector = ""
 const totalCards = 16 * 3; // Nombre total de cartes dans la collection
 
-async function fetchUserCards(container = null) {
-	const cardContainer = container ? container : document.getElementById('card-container');
+async function fetchUserCards(container) {
+	const cardContainer = container.parentNode ? container : document.getElementById('card-container');
 	cardContainer.innerHTML = `
 		<h2>Un messager arrive avec la collection que vous souhaitez consulter</h2>
 		<img width="112" height="112" alt"Chat qui danse" src="https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_9d758856a6544239a47fdf3bcd8f4313/animated/light/4.0"></img>
 		<div id="mainLoad" class="progress"><div style="width: 0%"></div></div>`;
-
+	console.log(typeof(cardContainer))
 	try {
-		const prog = document.querySelector('#mainLoad>div');
+		const prog = cardContainer.querySelector('#mainLoad>div');
+		console.log(prog)
 
 		prog.style.width = "1%";
 		const response = await fetch('https://raw.githubusercontent.com/Nikocards/NikocardZ/bdd/public/users_cards.json', {
@@ -71,7 +72,7 @@ async function fetchUserCards(container = null) {
 		console.error('Error fetching user cards data:', error);
 	}
 
-	if(!container) requestAnimationFrame(() => {displayAlbumCards(collector)});
+	if(!container.parentNode) requestAnimationFrame(() => {displayAlbumCards(collector)});
 
 	async function fetchTwitchDataMultiple(users) {
 		const query = JSON.stringify(users.map(username => {

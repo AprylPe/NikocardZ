@@ -542,6 +542,10 @@ div.stats {
     background: none;
 }
 
+.card:fullscreen .card-count {
+	display: none;
+}
+
 /* Accueil */
 
 .start {
