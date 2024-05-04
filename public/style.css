@@ -628,6 +628,26 @@ div.stats {
 	font-weight: bold;
 }
 
+@media (max-width: 660px) {
+	.start .jeu img{
+		width: 87px;
+		height: 120px;
+	}
+	.start .cadre {
+		font-size: 16px;
+		height: 300px;
+		margin: calc(40vh - 220px) 12px;
+		width: calc(100% - 28px);
+	}
+	.start .jeu {
+		left: calc(50% - 44px);
+		margin-top: 48px;
+	}
+	#start-content {
+		padding: 54px 32px 0 32px;
+	}
+}
+
 /* Affichage spécial */
 
 #page-6 .album-page-grid {

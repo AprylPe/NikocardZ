@@ -496,6 +496,8 @@ function initInput() {
 		}
 		drop.classList.add("visible");
 	}
+
+	inputStart.focus();
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
