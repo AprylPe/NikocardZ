@@ -162,7 +162,7 @@ function displayAlbumCards(collector) {
 						<div><img src="${imagePath}" alt="Card ${cardId}" width="290" height="400"/></div>
 					</div>
 					<div class="cardInfo">
-						<h3>N°${cardId}</h3>
+						<h3>N°${1 + Math.floor((cardId - 1) / 3)}</h3>
 						<p>${rarity}</p>
 						<h4>Variante</h4>
 						<p>${variant}</p>
@@ -224,7 +224,6 @@ function displayAlbumCards(collector) {
 		})
 	}
 
-
 	function displayAlbum(collection) {
 		const pages = [
 			[1, 2, 3, 4, 5, 6, 13,14,15],
@@ -265,7 +264,6 @@ function displayAlbumCards(collector) {
 				const cardElement = document.createElement('div');
 				const cardImgContainer = document.createElement('div');
 				const cardImage = document.createElement('img');
-
 				cardElement.classList.add('card');
 				cardElement.id = "card-" + cardNumber;
 				if(cardNumber%3 == 2) {
@@ -287,6 +285,13 @@ function displayAlbumCards(collector) {
 
 				cardElement.appendChild(cardImgContainer);
 				cardImgContainer.appendChild(cardImage);
+				if(collection.cards[cardNumber]) {
+					const cardCount = document.createElement('p');
+
+					cardCount.classList.add('card-count');
+					cardCount.innerText = "x " + collection.cards[cardNumber];
+					cardImgContainer.appendChild(cardCount);
+				}
 				pageGrid.appendChild(cardElement);
 			});
 
@@ -320,6 +325,14 @@ function displayAlbumCards(collector) {
 		const screenWidth = document.body.clientWidth;
 		const displayTwoPages = pageWidth * 2 <= screenWidth;// Fonction pour naviguer entre les pages
 
+		if(displayTwoPages) {
+			// Afficher la première page par défaut
+			const firstPage = document.getElementById('page-1');
+			if (firstPage) {
+				firstPage.classList.add('next-visible');
+			}
+		}
+
 		function navigatePage(direction) {
 			const visiblePage = document.querySelector('.album-page.visible');
 			const currentPageNumber = parseInt(visiblePage.id.split('-')[1]);
@@ -339,14 +352,6 @@ function displayAlbumCards(collector) {
 					visiblePage.classList.remove('next-visible');
 					nextPage.classList.add('next-visible');
 				}
-			}
-		}
-
-		if(displayTwoPages) {
-			// Afficher la première page par défaut
-			const firstPage = document.getElementById('page-1');
-			if (firstPage) {
-				firstPage.classList.add('next-visible');
 			}
 		}
 	}
@@ -426,10 +431,11 @@ function initInput() {
 					// Il faut actualiser l'album
 					collector = suggestions[0].id;
 					if(inputStart) {
+						console.log(inputStart)
 						input.value = suggestions[0].pseudo;
 						document.querySelector('header').style.display = null;
-						delete inputStart;
-						delete dropDownStart;
+						inputStart = null;
+						dropDownStart = null;
 					}
 					displayAlbumCards(collector)
 				}
@@ -441,8 +447,8 @@ function initInput() {
 					if(inputStart) {
 						input.value = collectionsData[start].pseudo;
 						document.querySelector('header').style.display = null;
-						delete inputStart;
-						delete dropDownStart;
+						inputStart = null;
+						dropDownStart = null;
 					}
 					displayAlbumCards(collector)
 				}
@@ -466,8 +472,8 @@ function initInput() {
 				if(inputStart) {
 					input.value = collectionsData[collector].pseudo;
 					document.querySelector('header').style.display = null;
-					delete inputStart;
-					delete dropDownStart;
+					inputStart = null;
+					dropDownStart = null;
 				}
 				displayAlbumCards(collector);
 			}
