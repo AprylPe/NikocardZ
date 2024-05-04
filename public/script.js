@@ -14,7 +14,7 @@ const totalCards = 16 * 3; // Nombre total de cartes dans la collection
 async function fetchUserCards(container) {
 	const cardContainer = container.parentNode ? container : document.getElementById('card-container');
 	cardContainer.innerHTML = `
-		<h2>Un messager arrive avec la collection que vous souhaitez consulter</h2>
+		<h2>Les marauds récupèrent prestement vos effets pour que vous puissiez guerroyer, Messire.</h2>
 		<img width="112" height="112" alt"Chat qui danse" src="https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_9d758856a6544239a47fdf3bcd8f4313/animated/light/4.0"></img>
 		<div id="mainLoad" class="progress"><div style="width: 0%"></div></div>`;
 	console.log(typeof(cardContainer))
@@ -49,7 +49,8 @@ async function fetchUserCards(container) {
 				if(!collectionsData[user]) {
 					collectionsData[user] = {pseudo: user}
 					newUsers.push(user);
-					if(newUsers.length > 34) {
+					//~ if(newUsers.length > 34) {
+					if(newUsers.length > 4) {
 						await fetchTwitchDataMultiple(newUsers);
 						//~ fetchTwitchDataMultiple(newUsers);
 						newUsers = []
@@ -504,8 +505,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 	let startContent = document.getElementById('start-content')
 	await fetchUserCards(startContent); // Appel de la fonction pour récupérer les données au chargement de la page
 	startContent.innerHTML = `<p>
-		Eh ! Pélo ! C koi ton blaze ?<br/>
-		Wesh.
+		Apposez votre titre ici, Messire.
+	</p><p>
+		A moins que vous ne soyez un gueux ?! Que nenni !
 	</p>
 	<input type="text" id="start-name">
 	<div id="start-dropDown"></div>`;

@@ -615,13 +615,14 @@ div.stats {
 #start-content input {
     color: #292222;
     background: #fff8d5;
-    width: 100%;
+    width: calc(100% - 10px);
 }
 
 #start-dropDown {
+	position: relative;
 	background-color: #fff8d5;
 	margin: 0;
-    width: 476px;
+    width: calc(100% - 14px);
 }
 #start-dropDown p:hover {
 	background: #fff;
