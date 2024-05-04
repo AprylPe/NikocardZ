@@ -8,12 +8,11 @@
 
 const clientId = 'kimne78kx3ncx6brgo4mv6wki5h1ko'; // s'te plait me kack pô :(
 let collectionsData = {}
-//~ let collector = "nikoballz"
 let collector = ""
 const totalCards = 16 * 3; // Nombre total de cartes dans la collection
 
-async function fetchUserCards() {
-	const cardContainer = document.getElementById('card-container');
+async function fetchUserCards(container = null) {
+	const cardContainer = container ? container : document.getElementById('card-container');
 	cardContainer.innerHTML = `
 		<h2>Un messager arrive avec la collection que vous souhaitez consulter</h2>
 		<img width="112" height="112" alt"Chat qui danse" src="https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_9d758856a6544239a47fdf3bcd8f4313/animated/light/4.0"></img>
@@ -21,10 +20,14 @@ async function fetchUserCards() {
 
 	try {
 		const prog = document.querySelector('#mainLoad>div');
+
+		prog.style.width = "1%";
 		const response = await fetch('https://raw.githubusercontent.com/Nikocards/NikocardZ/bdd/public/users_cards.json', {
 			cache: 'no-cache'
 		});
+		prog.style.width = "4%";
 		const responseData = await response.json();
+		prog.style.width = "7%";
 		delete responseData.undefined;
 		console.log('User Cards API Response:', response.status, responseData);
 		const totalUsers = Object.keys(responseData).length;
@@ -33,7 +36,7 @@ async function fetchUserCards() {
 		try {
 			let newUsers = [];
 			for(user in responseData) {
-				prog.style.width = `${100*count/totalUsers}%`;
+				prog.style.width = `${10 + 90*count/totalUsers}%`;
 				count ++;
 
 				if(user == "undefined") continue;
@@ -67,7 +70,8 @@ async function fetchUserCards() {
 	} catch (error) {
 		console.error('Error fetching user cards data:', error);
 	}
-	requestAnimationFrame(() => {displayAlbumCards(collector)})
+
+	if(!container) requestAnimationFrame(() => {displayAlbumCards(collector)});
 
 	async function fetchTwitchDataMultiple(users) {
 		const query = JSON.stringify(users.map(username => {
@@ -194,7 +198,7 @@ function displayAlbumCards(collector) {
 			</tr>`;
 		});
 
-		htmlContent += `</table><table><tr><th>Rareté</th><th>Collectées</th><th>Uniques</th></tr>`;
+		htmlContent += `</table><table><tr><th>Variante	</th><th>Collectées</th><th>Uniques</th></tr>`;
 
 		// Ajout des statistiques de rareté avec des barres de progression personnalisées
 		Object.keys(variantStats).forEach(variation => {
@@ -384,33 +388,49 @@ function displayAlbumCards(collector) {
 
 function initInput() {
 	const input = document.getElementById('collection-name');
+	let inputStart = document.getElementById('start-name');
 	const dropDown = document.getElementById('dropDown');
+	let dropDownStart = document.getElementById('start-dropDown');
 	const refresh = document.getElementById('refresh-page');
 	const selectDisplay = document.getElementById('style-select');
 
-	input.addEventListener('keyup', (e) => {
+	input.addEventListener('keyup', handleKeyup);
+	inputStart.addEventListener('keyup', handleKeyup);
+
+	dropDown.addEventListener('click', handleClick);
+	dropDownStart.addEventListener('click', handleClick);
+
+	function handleKeyup(e) {
+		console.log(dropDownStart, dropDown)
 		const start = e.target.value.toLowerCase();
+		const drop = dropDownStart || dropDown;
 		if(start.length < 1) {
 			// Trop court
-			dropDown.classList.remove("visible")
+			drop.classList.remove("visible")
 			return
 		}
 		const suggestions = Object.keys(collectionsData).filter((id) => id.startsWith(start)).map((id) => {return {id: id, pseudo: collectionsData[id].pseudo, avatar: collectionsData[id].avatar || ""};});
 		console.log(suggestions)
 		switch(suggestions.length) {
 			case 0:
-				dropDown.classList.add("visible");
-				dropDown.innerHTML = "<i>Collection inconnue...</i>";
+				drop.classList.add("visible");
+				drop.innerHTML = "<i>Collection inconnue...</i>";
 				break;
 			case 1:
 				if(suggestions[0].id == e.target.value) {
-					dropDown.classList.remove("visible");
+					drop.classList.remove("visible");
 				} else {
 					setDropDownContent(suggestions)
 				}
 				if(collector != suggestions[0].id) {
 					// Il faut actualiser l'album
 					collector = suggestions[0].id;
+					if(inputStart) {
+						input.value = suggestions[0].pseudo;
+						document.querySelector('header').style.display = null;
+						delete inputStart;
+						delete dropDownStart;
+					}
 					displayAlbumCards(collector)
 				}
 				break;
@@ -418,11 +438,17 @@ function initInput() {
 				if(collectionsData.hasOwnProperty(start) && collector != start) {
 					// Plusieurs choix mais un pseudo valide a été saisi
 					collector = start;
+					if(inputStart) {
+						input.value = collectionsData[start].pseudo;
+						document.querySelector('header').style.display = null;
+						delete inputStart;
+						delete dropDownStart;
+					}
 					displayAlbumCards(collector)
 				}
 				setDropDownContent(suggestions)
 		}
-	})
+	}
 
 	input.addEventListener('focusout', (e) => {
 		if(collector.startsWith(input.value.toLowerCase())) {
@@ -431,35 +457,49 @@ function initInput() {
 		setTimeout(() => dropDown.classList.remove("visible"), 250)
 	})
 
-	dropDown.addEventListener('click', (e) => {
+	function handleClick(e) {
 		if(e.target.dataset.collector || e.target.parentNode.dataset.collector) {
 			// Clic sur l'une des suggestions
 			input.value = e.target.innerText || e.target.parentNode.innerText;
 			if(collector != (e.target.dataset.collector || e.target.parentNode.dataset.collector)) {
 				collector = (e.target.dataset.collector || e.target.parentNode.dataset.collector);
+				if(inputStart) {
+					input.value = collectionsData[collector].pseudo;
+					document.querySelector('header').style.display = null;
+					delete inputStart;
+					delete dropDownStart;
+				}
 				displayAlbumCards(collector);
 			}
 		}
-	})
+	}
 
 	selectDisplay.addEventListener('change', () => {displayAlbumCards(collector)});
 
 	refresh.addEventListener('click', fetchUserCards);
 
 	function setDropDownContent(s) {
-		dropDown.innerHTML = "";
+		const drop = dropDownStart || dropDown;
+		drop.innerHTML = "";
 		for(suggestion of s) {
 			const p = document.createElement("p");
 			p.innerHTML = `<img class="avatar" src=${JSON.stringify(suggestion.avatar)} alt="${suggestion.pseudo}" onerror="this.style.visibility = 'hidden'" width="28" height="28"/> ${suggestion.pseudo}`;
 			p.dataset.collector = suggestion.id;
-			dropDown.appendChild(p);
+			drop.appendChild(p);
 		}
-		dropDown.classList.add("visible");
+		drop.classList.add("visible");
 	}
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-	fetchUserCards(); // Appel de la fonction pour récupérer les données au chargement de la page
+document.addEventListener('DOMContentLoaded', async function () {
+	let startContent = document.getElementById('start-content')
+	await fetchUserCards(startContent); // Appel de la fonction pour récupérer les données au chargement de la page
+	startContent.innerHTML = `<p>
+		Eh ! Pélo ! C koi ton blaze ?<br/>
+		Wesh.
+	</p>
+	<input type="text" id="start-name">
+	<div id="start-dropDown"></div>`;
 	initInput();
 });
 
