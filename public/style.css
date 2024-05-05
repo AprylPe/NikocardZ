@@ -600,7 +600,7 @@ div.stats {
 
 #start-content h2, #start-content>img {
 	color: #292222;
-    font-size: 24px;
+    font-size: 20px;
     margin: 0 auto;
     display: block;
 }
@@ -636,7 +636,7 @@ div.stats {
 	}
 	.start .cadre {
 		font-size: 16px;
-		height: 300px;
+		height: 350px;
 		margin: calc(40vh - 220px) 12px;
 		width: calc(100% - 28px);
 	}

@@ -583,11 +583,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 	let startContent = document.getElementById('start-content')
 	await fetchUserCards(startContent); // Appel de la fonction pour récupérer les données au chargement de la page
 	startContent.innerHTML = `<p>
-		Apposez votre titre ici, Messire.
+		Veuillez apposer ici votre glorieux titre de <b>Twitch</b> ici, Messire.
 	</p><p>
 		A moins que vous ne soyez un gueux ?! Que nenni !
 	</p>
-	<input type="text" id="start-name">
+	<input type="text" id="start-name" placeholder="Votre pseudo Twitch">
 	<div id="start-dropDown"></div>`;
 	initInput();
 });
