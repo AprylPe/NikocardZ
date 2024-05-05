@@ -7,8 +7,6 @@
 	<link href="public/style.css" rel="stylesheet">
 	<title>NikoCardZ - Regardez votre collection de cartes </title>
 	<script defer src="public/script.js"></script>
-	<link rel="preload" href="public/fond4.jpg" as="image">
-	<link rel="preload" href="public/cards/back_.png" as="image">
 	<link rel="preload" href="public/cards/cache1.png" as="image">
 	<link rel="preload" href="public/cards/cache2.png" as="image">
 	<link rel="preload" href="public/cards/cache3.png" as="image">
@@ -33,13 +31,10 @@ Mon joie, ma mie !" />
 	<header style="display: none">
 		<h1>NikoCardZ</h1>
 		<nav>
-			<div>
-				<label for="style-select">Style d'affichage :</label>
-				<select id="style-select">
-					<option value="album">Album</option>
-					<option value="debloquees">Débloquées</option>
-					<option value="rank">Classement</option>
-				</select>
+			<div id="style-select" data-value="album">
+				<button data-value="album">Album</button>
+				<button data-value="progress">Progression</button>
+				<button data-value="rank">Classement</button>
 			</div>
 			<div>
 				<label for="collection-name">Collection de :</label>

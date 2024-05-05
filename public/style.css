@@ -114,6 +114,24 @@ header button:hover {
 	background-color: #666;
 }
 
+#style-select button {
+	font-size: 16px;
+	padding: 4px;
+	width: 120px;
+	text-align: center;
+	display: block;
+	height: 30px;
+}
+
+#style-select[data-value="album"] button[data-value="album"],
+#style-select[data-value="album"] button:hover[data-value="album"],
+#style-select[data-value="progress"] button[data-value="progress"],
+#style-select[data-value="progress"] button:hover[data-value="progress"],
+#style-select[data-value="rank"] button[data-value="rank"],
+#style-select[data-value="rank"] button:hover[data-value="rank"] {
+    background: #222;
+}
+
 /* DopDown */
 
 #dropDown, #start-dropDown {
@@ -211,8 +229,8 @@ header button:hover {
 	border-radius: 6px;
 	overflow: hidden;
 	z-index: 10;
-    background-image: url(cards/back_.png);
-    background-size: cover;
+	background-image: url(cards/back_.png);
+	background-size: cover;
 }
 
 .album-page img, .card img {
@@ -282,17 +300,17 @@ img:hover + .card-count {
 	display: block;
 }
 .card-count {
-    display: none;
-    margin: 16vh 6px 0 0;
-    position: fixed;
-    z-index: 30;
-    color: #fff;
-    font-weight: bold;
-    top: 0;
-    font-size: 36px;
-    text-shadow: 0 0 8px #000, -2px -2px 6px #000, -2px 2px 6px #000, 2px -2px 6px #000, 2px 2px 6px #000;
-    width: 95%;
-    text-align: right;
+	display: none;
+	margin: 16vh 6px 0 0;
+	position: fixed;
+	z-index: 30;
+	color: #fff;
+	font-weight: bold;
+	top: 0;
+	font-size: 36px;
+	text-shadow: 0 0 8px #000, -2px -2px 6px #000, -2px 2px 6px #000, 2px -2px 6px #000, 2px 2px 6px #000;
+	width: 95%;
+	text-align: right;
 	pointer-events: none;
 }
 
@@ -539,7 +557,7 @@ div.stats {
 	margin-top: calc(50vh - 69%);
 	width: 100%;
 	height: auto;
-    background: none;
+	background: none;
 }
 
 .card:fullscreen .card-count {
@@ -549,33 +567,33 @@ div.stats {
 /* Accueil */
 
 .start {
-    width: 100%;
-    background: url("fond4.jpg");
-    height: 100vh;
-    background-size: 18vh;
+	width: 100%;
+	background: url("fond4.jpg");
+	height: 100vh;
+	background-size: 18vh;
 }
 
 .start .cadre {
-    font-size: 18px;
+	font-size: 18px;
 	width: 100%;
-    height: 400px;
-    max-width: 600px;
-    background: #eae3ce;
+	height: 400px;
+	max-width: 600px;
+	background: #eae3ce;
 	color: #292222;
-    margin: calc(50vh - 220px) auto;
-    border: solid 2px #411;
-    border-radius: 16px;
+	margin: calc(50vh - 220px) auto;
+	border: solid 2px #411;
+	border-radius: 16px;
 }
 
 .start .jeu {
-    left: calc(50% - 58px);
-    position: absolute;
-    margin-top: 48px;
+	left: calc(50% - 58px);
+	position: absolute;
+	margin-top: 48px;
 }
 .start .jeu img{
-    position: absolute;
-    box-shadow: 0 0 4px #000;
-    border-radius: 6px;
+	position: absolute;
+	box-shadow: 0 0 4px #000;
+	border-radius: 6px;
 }
 .start .jeu img:nth-child(1){
 	z-index: 5;
@@ -595,34 +613,34 @@ div.stats {
 }
 
 #start-content {
-    padding: 120px 60px 0 60px;
+	padding: 120px 60px 0 60px;
 }
 
 #start-content h2, #start-content>img {
 	color: #292222;
-    font-size: 20px;
-    margin: 0 auto;
-    display: block;
+	font-size: 20px;
+	margin: 0 auto;
+	display: block;
 }
 
 #start-content .progress {
-    width: 70%;
+	width: 70%;
 }
 #start-content .progress>div {
-    background-color: #fb7;
+	background-color: #fb7;
 }
 
 #start-content input {
-    color: #292222;
-    background: #fff8d5;
-    width: calc(100% - 10px);
+	color: #292222;
+	background: #fff8d5;
+	width: calc(100% - 10px);
 }
 
 #start-dropDown {
 	position: relative;
 	background-color: #fff8d5;
 	margin: 0;
-    width: calc(100% - 14px);
+	width: calc(100% - 14px);
 }
 #start-dropDown p:hover {
 	background: #fff;
@@ -652,13 +670,13 @@ div.stats {
 /* Classement */
 
 .classement {
-    max-width: 600px;
-    margin: auto;
-    color: #fff;
-    text-align: center;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+	max-width: 600px;
+	margin: auto;
+	color: #fff;
+	text-align: center;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
 }
 .classement .title {
 }
@@ -674,12 +692,12 @@ div.stats {
 	border-collapse: collapse;
 	border: solid 1px #000;
 	border-radius: 8px;
-    font-size: 16px;
+	font-size: 16px;
 }
 .classement table .progress {
-    margin: 0 2%;
-    height: 6px;
-    width: 96%;
+	margin: 0 2%;
+	height: 6px;
+	width: 96%;
 }
 .classement table p {
 	margin: 0;
@@ -693,25 +711,25 @@ div.stats {
 	display: inline-block;
 }
 .classement table .pseudo {
-    text-align: left;
-    display: flex;
-    align-items: center;
+	text-align: left;
+	display: flex;
+	align-items: center;
 }
 .classement th {
-    background-color: #111;
-    padding: 4px 0;
-    font-size: 18px;
+	background-color: #111;
+	padding: 4px 0;
+	font-size: 18px;
 }
 .classement td {
-    padding: 1px 4px;
-    min-width: 100px;
+	padding: 1px 4px;
+	min-width: 100px;
 }
 .classement td:first-child {
-    min-width: 40px;
+	min-width: 40px;
 }
 
 .classement .me {
-    border: solid 2px #f22;
+	border: solid 2px #f22;
 }
 
 

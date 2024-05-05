@@ -155,8 +155,8 @@ function displayAlbumCards() {
 
 	//~ console.log(collection);
 
-	switch(selectDisplay.value) {
-		case 'debloquees':
+	switch(selectDisplay.dataset.value) {
+		case 'progress':
 			displayStats(collection)
 			break;
 		case 'rank':
@@ -212,7 +212,7 @@ function displayAlbumCards() {
 				element = element.parentNode;
 			}
 			if(element) {
-				selectDisplay.value = 'debloquees';
+				selectDisplay.dataset.value = 'progress';
 				document.getElementById('collection-name').value = element.dataset.collection;
 				collector = element.dataset.collection;
 				requestAnimationFrame(displayAlbumCards);
@@ -560,7 +560,14 @@ function initInput() {
 		}
 	}
 
-	selectDisplay.addEventListener('change', displayAlbumCards);
+	selectDisplay.querySelectorAll('button').forEach(button => {
+		button.addEventListener('click', e => {
+			if(e.target.parentNode.dataset.value != e.target.dataset.value) {
+				e.target.parentNode.dataset.value = e.target.dataset.value;
+				displayAlbumCards();
+			}
+		});
+	})
 
 	refresh.addEventListener('click', fetchUserCards);
 
