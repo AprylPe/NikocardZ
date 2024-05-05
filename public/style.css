@@ -649,6 +649,73 @@ div.stats {
 	}
 }
 
+/* Classement */
+
+.classement {
+    max-width: 600px;
+    margin: auto;
+    color: #fff;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.classement .title {
+}
+
+.classement tr {
+	background: #444;
+}
+.classement tr:nth-of-type(odd) {
+	background: #303030;
+}
+
+.classement table {
+	border-collapse: collapse;
+	border: solid 1px #000;
+	border-radius: 8px;
+    font-size: 16px;
+}
+.classement table .progress {
+    margin: 0 2%;
+    height: 6px;
+    width: 96%;
+}
+.classement table p {
+	margin: 0;
+}
+.classement table img {
+	margin: 2px 12px 2px 4px;
+	height: 28px;
+	width: 28px;
+	overflow: hidden;
+	align-self: start;
+	display: inline-block;
+}
+.classement table .pseudo {
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+.classement th {
+    background-color: #111;
+    padding: 4px 0;
+    font-size: 18px;
+}
+.classement td {
+    padding: 1px 4px;
+    min-width: 100px;
+}
+.classement td:first-child {
+    min-width: 40px;
+}
+
+.classement .me {
+    border: solid 2px #f22;
+}
+
+
+
 /* Affichage spécial */
 
 #page-6 .album-page-grid {

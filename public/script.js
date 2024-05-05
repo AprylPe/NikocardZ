@@ -12,58 +12,80 @@ let collector = ""
 const totalCards = 16 * 3; // Nombre total de cartes dans la collection
 
 async function fetchUserCards(container) {
+	// Si un élément DOM est passé en argument, on l'utilise pour afficher le message de chargement
+	// Sinon (évenement clic sur le bouton), on utiliser '#card-container'
 	const cardContainer = container.parentNode ? container : document.getElementById('card-container');
 	cardContainer.innerHTML = `
 		<h2>Les marauds récupèrent prestement vos effets pour que vous puissiez guerroyer, Messire.</h2>
 		<img width="112" height="112" alt"Chat qui danse" src="https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_9d758856a6544239a47fdf3bcd8f4313/animated/light/4.0"></img>
 		<div id="mainLoad" class="progress"><div style="width: 0%"></div></div>`;
-	console.log(typeof(cardContainer))
-	try {
-		const prog = cardContainer.querySelector('#mainLoad>div');
-		console.log(prog)
 
+	try {
+		// Récupération de la barre de progression
+		const prog = cardContainer.querySelector('#mainLoad>div');
 		prog.style.width = "1%";
+
+		// Récupération du contenu users_cards.json, sans utiliser le cache
 		const response = await fetch('https://raw.githubusercontent.com/Nikocards/NikocardZ/bdd/public/users_cards.json', {
 			cache: 'no-cache'
 		});
 		prog.style.width = "4%";
 		const responseData = await response.json();
 		prog.style.width = "7%";
+
+		// On retire la fausse collection "undefined"
 		delete responseData.undefined;
+
 		console.log('User Cards API Response:', response.status, responseData);
 		const totalUsers = Object.keys(responseData).length;
 		let count = 0;
 
 		try {
+			// Liste des utilisateurs ajoutés à la liste
 			let newUsers = [];
 			for(user in responseData) {
+				// MàJ de la barre de progression
 				prog.style.width = `${10 + 90*count/totalUsers}%`;
 				count ++;
 
 				if(user == "undefined") continue;
+				// On s'assure que les données du joueur soient valides (il y a bien les deux listes et elles font la même taille)
 				if(!responseData[user].carte || !responseData[user].nb || responseData[user].carte.length != responseData[user].nb.length) {
 					console.warn(`Utilisateur ignoré: ${user} (Données invalides)`);
 					console.log(responseData[user]);
 					continue;
 				}
+				// Si c'est un nouveau pseudo
 				if(!collectionsData[user]) {
 					collectionsData[user] = {pseudo: user}
 					newUsers.push(user);
-					//~ if(newUsers.length > 34) {
-					if(newUsers.length > 4) {
+					// Dès qu'on a 35 pseudos à traiter, on récupère leur données (c'est la limite fixée par l'api de twitch)
+					if(newUsers.length > 34) {
 						await fetchTwitchDataMultiple(newUsers);
 						//~ fetchTwitchDataMultiple(newUsers);
 						newUsers = []
 					}
 				}
+				// Calcul de la liste des cartes
 				collectionsData[user].cards = {}
+				collectionsData[user].total = 0
+				collectionsData[user].uniques = 0
 				for(i in responseData[user].carte) {
 					const card = Card2Id(responseData[user].carte[i]);
 					if(card == 1000) continue;
 					collectionsData[user].cards[card] = responseData[user].nb[i];
-					if(card%3) collectionsData[user].cards[card+1] = Math.floor(responseData[user].nb[i]/5);
+					if(card%3 && responseData[user].nb[i] > 4) {
+						collectionsData[user].cards[card+1] = Math.floor(responseData[user].nb[i]/5);
+						collectionsData[user].total += collectionsData[user].cards[card+1];
+						collectionsData[user].uniques ++;
+					}
+					if(responseData[user].nb[i] > 0) {
+						collectionsData[user].total += responseData[user].nb[i];
+						collectionsData[user].uniques ++;
+					}
 				}
 			}
+			// On récupère les données des éventuels derniers nouveaux pseudos
 			if(newUsers.length) {
 				await fetchTwitchDataMultiple(newUsers);
 				//~ fetchTwitchDataMultiple(newUsers);
@@ -73,7 +95,8 @@ async function fetchUserCards(container) {
 		console.error('Error fetching user cards data:', error);
 	}
 
-	if(!container.parentNode) requestAnimationFrame(() => {displayAlbumCards(collector)});
+	// Si la fonction est appelée par le bouton "actualiser", on affiche la collection
+	if(!container.parentNode) requestAnimationFrame(displayAlbumCards);
 
 	async function fetchTwitchDataMultiple(users) {
 		const query = JSON.stringify(users.map(username => {
@@ -123,21 +146,78 @@ async function fetchUserCards(container) {
 	}
 }
 
-function displayAlbumCards(collector) {
+function displayAlbumCards() {
 	const cardContainer = document.getElementById('card-container');
 	const selectDisplay = document.getElementById('style-select');
 	cardContainer.innerHTML = ''; // Effacer le contenu précédent du conteneur
 
 	const collection = collectionsData.hasOwnProperty(collector) ? collectionsData[collector] : {pseudo: collector, cards: {}};
 
-	console.log(collection);
+	//~ console.log(collection);
 
 	switch(selectDisplay.value) {
 		case 'debloquees':
 			displayStats(collection)
 			break;
+		case 'rank':
+			displayRanks(collection)
+			break;
 		default:
 			displayAlbum(collection)
+	}
+
+	function displayRanks(collection) {
+		let scores = Object.entries(collectionsData);
+		scores.sort((a, b) => (a[1].uniques == b[1].uniques ? (b[1].total - a[1].total) : (b[1].uniques - a[1].uniques)))
+
+		let page = 1
+		displayTable()
+
+		function displayTable() {
+			let htmlContent = `<div class="classement">
+				<div class="title"><h1>Classement</h1></div>
+				<table>
+					<thead>
+						<tr>
+							<th>Rang</th>
+							<th>Pseudo</th>
+							<th>Total</th>
+							<th>Uniques</th>
+						</tr>
+					</thead>
+					<tbody>
+			`;
+
+			for(i in scores) {
+				const progressPercent = (scores[i][1].uniques / 48 * 100).toFixed(2); // Calcul du pourcentage
+				htmlContent += `<tr${scores[i][0] == collector ? ' class="me"' : ''} data-collection="${scores[i][0]}">
+					<td>${i*1 + 1}</td>
+					<td class="pseudo"><img class="avatar" src=${JSON.stringify(scores[i][1].avatar)} alt="${scores[i][1].pseudo}" onerror="this.style.visibility = 'hidden'" width="28" height="28"/> ${scores[i][1].pseudo}</td>
+					<td>${scores[i][1].total} ${scores[i][1].total > 1 ? "cartes" : "carte"}</td>
+					<td>${scores[i][1].uniques} / 48<div class="progress"><div style="width: ${progressPercent}%"></div></div></td>
+				</tr>`;
+			}
+
+			htmlContent += `</tbody></table></div>`;
+			cardContainer.innerHTML = htmlContent;
+
+			cardContainer.querySelectorAll('tr[data-collection]').forEach(tr => {
+				tr.addEventListener('click', displayStats);
+			})
+		}
+
+		function displayStats(e) {
+			let element = e.target;
+			while(element && !element.dataset.collection) {
+				element = element.parentNode;
+			}
+			if(element) {
+				selectDisplay.value = 'debloquees';
+				document.getElementById('collection-name').value = element.dataset.collection;
+				collector = element.dataset.collection;
+				requestAnimationFrame(displayAlbumCards);
+			}
+		}
 	}
 
 	function displayStats(collection) {
@@ -408,7 +488,6 @@ function initInput() {
 	dropDownStart.addEventListener('click', handleClick);
 
 	function handleKeyup(e) {
-		console.log(dropDownStart, dropDown)
 		const start = e.target.value.toLowerCase();
 		const drop = dropDownStart || dropDown;
 		if(start.length < 1) {
@@ -433,13 +512,12 @@ function initInput() {
 					// Il faut actualiser l'album
 					collector = suggestions[0].id;
 					if(inputStart) {
-						console.log(inputStart)
 						input.value = suggestions[0].pseudo;
 						document.querySelector('header').style.display = null;
 						inputStart = null;
 						dropDownStart = null;
 					}
-					displayAlbumCards(collector)
+					displayAlbumCards()
 				}
 				break;
 			default:
@@ -452,7 +530,7 @@ function initInput() {
 						inputStart = null;
 						dropDownStart = null;
 					}
-					displayAlbumCards(collector)
+					displayAlbumCards()
 				}
 				setDropDownContent(suggestions)
 		}
@@ -477,12 +555,12 @@ function initInput() {
 					inputStart = null;
 					dropDownStart = null;
 				}
-				displayAlbumCards(collector);
+				displayAlbumCards();
 			}
 		}
 	}
 
-	selectDisplay.addEventListener('change', () => {displayAlbumCards(collector)});
+	selectDisplay.addEventListener('change', displayAlbumCards);
 
 	refresh.addEventListener('click', fetchUserCards);
 
