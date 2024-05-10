@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+.container {
+	display: flex;
+	justify-content: center;
+}
+.cardBuilder {
+	display: flex;
+	flex-direction: column;
+	width: 455px;
+	height: 620px;
+	padding: 10px;
+	border: solid 2px #000;
+	border-radius: 8px;
+}
+.cardBuilder * {
+	font-size: 16px;
+}
+#name {
+	width: 80%;
+	margin-bottom: 10px;
+	padding: 8px;
+}
+#image {
+	height: 300px;
+	margin-bottom: 10px;
+}
+#effet {
+	width: 80%;
+	height: 150px;
+	margin: 0 0 10px 10%;
+}
+.bottom {
+	display: flex;
+}
+#force, #vie {
+	flex: 1;
+	height: 80px;
+}
+#lore {
+	flex: 5;
+	height: 80px;
+}
+
+	</style>
+	<title>Nouvelle carte</title>
+</head>
+<body>
+	<div class="container">
+		<div class="cardBuilder">
+			<input type="text" id="name" placeholder="Nom" />
+			<input type="file" id="image" accept="image/*" />
+			<textarea id="effet">Effet : </textarea>
+			<div class="bottom">
+				<input type="number" min="0" max="5" id="force" placeholder="Force" />
+				<textarea id="lore" placeholder="Lore"></textarea>
+				<input type="number" min="0" max="5" id="vie" placeholder="Vie" />
+			</div>
+			<button id="generateButton">Générer la carte</button>
+		</div>
+	</div>
+
+	<div id="cardPreview"></div>
+	<script>
+const WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1139846563611541576/W9QQbnRfcLGTpA8WYvey2nXLy26ovprsGHg68b-2YZzM9aBRP9jNojWMaCqzdFJDtyiY"
+const BASE_IMAGE_URL = "public/cards/model.png"; // URL vers l'image du template
+
+document.addEventListener("DOMContentLoaded", function() {
+
+	const generateButton = document.getElementById("generateButton");
+//~ 	const sendButton = document.getElementById("sendButton");
+//~ 	const resetButton = document.getElementById("resetButton");
+//~ 	const imagePreview = document.getElementById("imagePreview");
+//~ 	const form = document.getElementById("imageForm");
+
+	generateButton.addEventListener("click", generateCard);
+//~ 	sendButton.addEventListener("click", sendMessage);
+//~ 	resetButton.addEventListener("click", resetForm);
+
+	function generateImage() {
+		// Créer un canvas
+		const canvas = document.createElement("canvas");
+		const ctx = canvas.getContext("2d");
+
+		// Charger l'image de base depuis la constante en base64
+		const baseImage = new Image();
+		baseImage.src = "data:image/png;base64," + BASE_IMAGE_BASE64;
+
+		baseImage.onload = function() {
+			// Dessiner l'image de base sur le canvas
+			canvas.width = baseImage.width;
+			canvas.height = baseImage.height;
+			ctx.drawImage(baseImage, 0, 0);
+
+			// Ajouter du texte à des coordonnées spécifiques en fonction du jour
+			ctx.textAlign = "center";
+			ctx.fillStyle = "#220000";
+
+			const currentDate = new Date();
+			const currentDay = currentDate.getDay(); // 0 = dimanche, 1 = lundi, ..., 6 = samedi
+			const daysToAdd = (8 - currentDay) % 7;
+
+			for (let dayIndex = 0; dayIndex < days.length; dayIndex++) {
+				// Calculer la date du jour en cours
+				const dayDate = new Date(currentDate);
+				dayDate.setDate(currentDate.getDate() + daysToAdd + dayIndex);
+
+				const dayNumber = dayDate.getDate();
+
+				ctx.font = "64px Impact";
+				// Vérifier si une heure de début est définie
+				const startTime = form[`${days[dayIndex].name}StartTime`].value;
+				if (!startTime) {
+					ctx.fillStyle = "#808080";
+					ctx.fillText(`${days[dayIndex].display} ${dayNumber}`, days[dayIndex].x, days[dayIndex].y);
+					ctx.font = "48px Arial";
+					ctx.fillText("Pas de live", days[dayIndex].x, days[dayIndex].y + 64);
+					ctx.fillStyle = "#220000";
+					continue; // Passer au jour suivant
+				}
+				ctx.fillText(`${days[dayIndex].display} ${dayNumber}`, days[dayIndex].x, days[dayIndex].y);
+				ctx.font = "64px Arial";
+
+				// Ajouter la deuxième ligne de texte
+				const endTime = form[`${days[dayIndex].name}EndTime`].value;
+				const startHours = startTime.split(":")[0];
+				const startMinutes = startTime.split(":")[1];
+				const endHours = endTime ? endTime.split(":")[0] : "";
+				const endMinutes = endTime ? endTime.split(":")[1] : "";
+				const meetingTime = `${startHours}h${startMinutes>0?startMinutes:""}` + (endHours ? ` - ${endHours}h${endMinutes>0?endMinutes:""}` : "");
+				if(meetingTime.length > 8) {
+					ctx.font = "48px Arial";
+				}
+				ctx.fillText(meetingTime, days[dayIndex].x, days[dayIndex].y + 64);
+
+				// Ajouter la troisième ligne si un commentaire est défini
+				var comment = form[`${days[dayIndex].name}Theme`].value;
+				var comment2 = form[`${days[dayIndex].name}Theme2`].value;
+				if(!comment && comment2) {
+					comment = comment2
+					comment2 = null
+				}
+				if (comment) {
+					ctx.font = (comment.lenght>16?"40":"48") + "px Arial";
+					ctx.fillText(comment, days[dayIndex].x, days[dayIndex].y + 128);
+				}
+				if (comment2) {
+					ctx.font = (comment2.lenght>16?"40":"48") + "px Arial";
+					ctx.fillText(comment2, days[dayIndex].x, days[dayIndex].y + 192);
+				}
+			}
+
+			// Convertir le canvas en image en base64
+			const generatedImageURL = canvas.toDataURL("image/png");
+
+			// Afficher l'image générée dans la zone de prévisualisation
+			const imageElement = document.createElement("img");
+			imageElement.src = generatedImageURL;
+			imagePreview.innerHTML = ""; // Effacer la prévisualisation précédente
+			imagePreview.appendChild(imageElement);
+		};
+	}
+
+	function sendMessage() {
+		const confirmMessage = confirm("Êtes-vous sûr(e) que l'image vous convient ?");
+
+		if (!confirmMessage) {
+			return;
+		}
+
+		const messageContent = document.getElementById("message").value;
+
+		// Créer un objet FormData pour envoyer le contenu du formulaire
+		const formData = new FormData();
+		formData.append("content", messageContent);
+
+		// Récupérer l'image en tant que fichier depuis l'élément img
+		const imageDataURL = document.querySelector("#imagePreview img").src;
+		const imageBlob = dataURLtoBlob(imageDataURL);
+		formData.append("file", imageBlob, "image.png");
+
+		// Envoyer le formulaire au webhook Discord
+		fetch(WEBHOOK_DISCORD, {
+			method: "POST",
+			body: formData
+		})
+			.then(response => {
+				if (response.ok) {
+					alert("Message envoyé avec succès !");
+				} else {
+					alert("Une erreur est survenue lors de l'envoi du message.");
+				}
+			})
+			.catch(error => {
+				console.error("Erreur lors de l'envoi du message :", error);
+				alert("Une erreur est survenue lors de l'envoi du message.");
+			});
+	}
+
+	// Convertir une URL de données en un objet Blob
+	function dataURLtoBlob(dataURL) {
+		const arr = dataURL.split(",");
+		const mime = arr[0].match(/:(.*?);/)[1];
+		const byteString = atob(arr[1]);
+		let n = byteString.length;
+		const u8arr = new Uint8Array(n);
+		while (n--) {
+			u8arr[n] = byteString.charCodeAt(n);
+		}
+		return new Blob([u8arr], { type: mime });
+	}
+
+	function generateCard() {
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+		canvas.width = 1059;  // Largeur de l'image modèle
+		canvas.height = 768;  // Hauteur de l'image modèle
+
+		const modelImage = new Image();
+		modelImage.src = BASE_IMAGE_URL;
+		modelImage.onload = () => {
+			ctx.drawImage(modelImage, 0, 0);
+
+			const userImage = new Image();
+			userImage.src = URL.createObjectURL(document.getElementById('image').files[0]);
+			userImage.onload = () => {
+				// Dessiner l'image de l'utilisateur à la position appropriée
+				ctx.drawImage(userImage, 0, 0, 1059, 768); // Ajuster selon la taille de la zone rose
+
+				// Ajouter du texte et autres informations ici
+				ctx.textAlign = 'center';
+				ctx.font = '24px Arial';
+				ctx.fillText(document.getElementById('name').value, 530, 50); // Exemple de position
+
+				const cardImageURL = canvas.toDataURL('image/png');
+				document.getElementById('cardPreview').innerHTML = `<img src="${cardImageURL}" />`;
+			};
+		};
+	}
+
+//~ 	generateCard()
+});
+
+	</script>
+</body>
+</html>
