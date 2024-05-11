@@ -3,7 +3,11 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Playball&display=swap" rel="stylesheet">
 	<style>
+
 .container {
 	display: flex;
 	justify-content: center;
@@ -16,12 +20,13 @@
 	padding: 10px;
 	border: solid 2px #000;
 	border-radius: 8px;
+	background: #fff5eb;
 }
 .cardBuilder * {
 	font-size: 16px;
 }
 #name {
-	width: 80%;
+	width: 60%;
 	margin-bottom: 10px;
 	padding: 8px;
 }
@@ -40,25 +45,56 @@
 #force, #vie {
 	flex: 1;
 	height: 80px;
+    font-size: 32px;
+    text-align: center;
+	margin-bottom: 10px;
 }
 #lore {
 	flex: 5;
 	height: 80px;
+	margin-bottom: 10px;
 }
-
+input, textarea {
+	border: solid 1px #808080;
+	background: #fff5eb;
+    border-radius: 8px;
+	resize: none;
+    box-shadow: 4px 4px 2px #DFC5B7;
+}
+textarea {
+	text-align: center;
+}
+img {
+	margin: auto;
+    max-width: 90%;
+    max-height: 90vh;
+}
+#cardPreview {
+    display: flex;
+}
+.loadfonts {
+	position: fixed;
+	visibility: hidden;
+	oppacity: 0;
+}
 	</style>
 	<title>Nouvelle carte</title>
+
 </head>
 <body>
+	<div class="loadfonts">
+		<span style="font-family: 'Caveat Brush';">a</span>
+		<span style="font-family: Playball;">a</span>
+	</div>
 	<div class="container">
 		<div class="cardBuilder">
-			<input type="text" id="name" placeholder="Nom" />
-			<input type="file" id="image" accept="image/*" />
-			<textarea id="effet">Effet : </textarea>
+			<input type="text" id="name" placeholder="Nom" maxlength="30" required />
+			<input type="file" id="image" accept="image/*" required />
+			<textarea id="effet" required>Effet : </textarea>
 			<div class="bottom">
-				<input type="number" min="0" max="5" id="force" placeholder="Force" />
-				<textarea id="lore" placeholder="Lore"></textarea>
-				<input type="number" min="0" max="5" id="vie" placeholder="Vie" />
+				<input type="number" min="0" max="4" id="force" placeholder="Force" required />
+				<textarea id="lore" placeholder="Lore" required></textarea>
+				<input type="number" min="0" max="4" id="vie" placeholder="Vie" required />
 			</div>
 			<button id="generateButton">Générer la carte</button>
 		</div>
@@ -66,7 +102,8 @@
 
 	<div id="cardPreview"></div>
 	<script>
-const WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1139846563611541576/W9QQbnRfcLGTpA8WYvey2nXLy26ovprsGHg68b-2YZzM9aBRP9jNojWMaCqzdFJDtyiY"
+const WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1238767593905717279/YA_YsxbnFMGQWifAjheOjA3xneZytMeAlgxMEn_fJwKuq9wV347BGkS337DiVLsA4Kip"
+const DEFAULT_AVATAR = "https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_a2b08e2a08db40ff886c76a7220a59d1/default/light/4.0"
 const BASE_IMAGE_URL = "public/cards/model.png"; // URL vers l'image du template
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -214,35 +251,118 @@ document.addEventListener("DOMContentLoaded", function() {
 		return new Blob([u8arr], { type: mime });
 	}
 
-	function generateCard() {
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d');
-		canvas.width = 1059;  // Largeur de l'image modèle
-		canvas.height = 768;  // Hauteur de l'image modèle
-
-		const modelImage = new Image();
-		modelImage.src = BASE_IMAGE_URL;
-		modelImage.onload = () => {
-			ctx.drawImage(modelImage, 0, 0);
-
-			const userImage = new Image();
-			userImage.src = URL.createObjectURL(document.getElementById('image').files[0]);
-			userImage.onload = () => {
-				// Dessiner l'image de l'utilisateur à la position appropriée
-				ctx.drawImage(userImage, 0, 0, 1059, 768); // Ajuster selon la taille de la zone rose
-
-				// Ajouter du texte et autres informations ici
-				ctx.textAlign = 'center';
-				ctx.font = '24px Arial';
-				ctx.fillText(document.getElementById('name').value, 530, 50); // Exemple de position
-
-				const cardImageURL = canvas.toDataURL('image/png');
-				document.getElementById('cardPreview').innerHTML = `<img src="${cardImageURL}" />`;
-			};
-		};
+	function loadImage(url) {
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.onload = () => resolve(img);
+			img.onerror = () => reject(new Error(`Failed to load image at ${url}`));
+			img.src = url;
+		});
 	}
 
-//~ 	generateCard()
+	function loadFont(fontFamily) {
+		const font = new FontFaceObserver(fontFamily);
+		return font.load();
+	}
+
+	function generateCard() {
+		const name = document.getElementById('name').value;
+		let userImg;
+		try {
+			userImg = URL.createObjectURL(document.getElementById('image').files[0]);
+		} catch(e) {
+			document.getElementById('image').setCustomValidity("Veuillez choisir une image");
+			document.getElementById('image').reportValidity();
+			return
+		}
+		const effect = document.getElementById('effet').value.match(/[^\n]+/g);
+		const lore = document.getElementById('lore').value.match(/[^\n]+/g);
+		const force = document.getElementById('force').value;
+		const vie = document.getElementById('vie').value;
+
+		if(!/^.{1,30}$/.test(name)) {
+			document.getElementById('name').reportValidity();
+			return;
+		}
+		console.log("a")
+		if(!["0","1","2","3","4"].includes(force)) {
+			document.getElementById('force').reportValidity();
+			return
+		}
+		console.log(0)
+		if(!["0","1","2","3","4"].includes(vie)) {
+			document.getElementById('vie').reportValidity();
+			return
+		}
+		console.log(1)
+
+		const resources = [
+			loadImage('public/create/fond.png'),
+			loadImage('public/create/masque.png'),
+			loadImage(`public/create/F${force}.png`),
+			loadImage(`public/create/V${vie}.png`),
+			loadImage(userImg)
+		];
+		console.log(2)
+
+		Promise.all(resources).then(values => {
+		console.log(3)
+			const [background, masque1, masque2, masque3, illustration] = values;
+
+			// Tous vos chargements sont terminés, continuez à utiliser les ressources ici
+			const canvas = document.createElement('canvas');
+			const ctx = canvas.getContext('2d');
+			canvas.width = 1495;
+			canvas.height = 2062;
+
+			// Fond
+			ctx.drawImage(background, 0, 0);
+
+			// Nom de la carte
+			const name = document.getElementById('name').value
+			ctx.fillStyle = '#fff5ed';
+			ctx.fillRect(80, 90, 40 * name.length, 70);
+
+			ctx.font = '96px "Caveat Brush"';
+			ctx.textAlign = 'left';
+			ctx.fillStyle = '#dfc5b7';
+			ctx.fillText(name, 86, 166); // Ombre
+			ctx.fillStyle = '#000000';
+			ctx.fillText(name, 80, 160); // Text
+
+			// Image de l'utilisateur
+			ctx.drawImage(illustration, 12, 259, 1471, 1228); // Ajuster les coordonnées et dimensions
+
+			// Effet
+			ctx.font = 'bold 72px Playball';
+			ctx.textAlign = 'center';
+			console.log(effect)
+			for(let i = 0; i < effect.length && i < 3; i++) {
+				ctx.fillStyle = '#ffbe7c';
+				ctx.fillText(effect[i], 752, (effect.length < 3 ? 1604 : 1572) + 80*i, i == 0 ? 1400 : 800, 100); // Ombre
+				ctx.fillStyle = '#000000';
+				ctx.fillText(effect[i], 748, (effect.length < 3 ? 1600 : 1568) + 80*i, i == 0 ? 1400 : 800, 100); // Texte
+			}
+			// Lore
+			ctx.font = '64px Playball';
+			ctx.textAlign = 'center';
+			for(let i = 0; i < lore.length && i < 2; i++) {
+				ctx.fillStyle = '#ffbe7c';
+				ctx.fillText(lore[i], 762, 1824 + 72*i, 700, 100); // Ombre
+				ctx.fillStyle = '#000000';
+				ctx.fillText(lore[i], 758, 1820 + 72*i, 700, 100); // Texte
+			}
+
+			ctx.drawImage(masque1, 0, 0);
+			ctx.drawImage(masque2, 0, 1662);
+			ctx.drawImage(masque3, 1095, 1662);
+
+			const cardImageURL = canvas.toDataURL('image/png');
+			document.getElementById('cardPreview').innerHTML = `<img src="${cardImageURL}" />`;  // Afficher l'image générée
+		}).catch(error => {
+			console.error('Failed to load one or more resources:', error);
+		});
+	}
 });
 
 	</script>

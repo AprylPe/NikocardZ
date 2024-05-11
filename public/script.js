@@ -288,8 +288,8 @@ function displayAlbumCards() {
 					rarityStats[card.rarity] += quantity;
 					variantStats[card.variant] += quantity;
 					listContent += `<div class="cardRender ${card.rarity}">
-						<div class="card unlocked${cardId%3==0?' ex':''}${cardId%3==2?' holo':''}">
-							<div><img src="${imagePath}" alt="Card ${cardId}" width="290" height="400"/></div>
+						<div class="card unlocked${card.variant == 'E-X Card' ?' ex':''}${card.variant == 'Holographique'?' holo':''}">
+							<div><img src="${imagePath}" alt="Card ${card.name}" width="290" height="400"/></div>
 						</div>
 						<div class="cardInfo">
 							<h3>N°${card.num}</h3>
