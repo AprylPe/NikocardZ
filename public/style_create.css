@@ -122,6 +122,9 @@ header h2 {
 	height: 80px;
 	margin-bottom: 10px;
 }
+#sendButton {
+	margin-bottom: 10px;
+}
 input, textarea {
 	border: solid 1px #808080;
 	background: #fff5eb;

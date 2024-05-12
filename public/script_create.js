@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	const avatarImg = document.getElementById('avatar'); // Récupérer l'élément de l'avatar
 	const backButton = document.getElementById('goBack');
 	const messageInput = document.getElementById('message');
+	const bgColorInput = document.getElementById('bgColor');
 
 	generateButton.addEventListener("click", generateCard);
 	shareButton.addEventListener("click", () => {
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	pseudoInput.addEventListener("focusout", checkAvatar);
 
 	async function checkAvatar() {
-		const pseudo = pseudoInput.value; // Récupérer la valeur du pseudo
+		const pseudo = pseudoInput.value.trim(); // Récupérer la valeur du pseudo
 
 		// Vérifier si le pseudo respecte le modèle /^[a-zA-Z0-9_]{4,25}$/
 		if (/^[a-zA-Z0-9_]{4,25}$/.test(pseudo)) {
@@ -91,9 +92,9 @@ document.addEventListener("DOMContentLoaded", function() {
 			avatar_url: avatarImg.src,
 			username: 'NikoCardZ 🂡',
 			embeds: [{
-				color: 15158332,
 				title: `${pseudoInput.value} a créé une nouvelle carte !`,
 				description: messageInput.value,
+				color: parseInt(bgColorInput.value.replace('#', ''), 16) || 15158332,
 				author: {
 					name: pseudoInput.value,
 					icon_url: avatarImg.src
@@ -103,11 +104,9 @@ document.addEventListener("DOMContentLoaded", function() {
 				}
 			}]
 		}
-//~ 		const messageContent = document.getElementById("message").value;
 
 		// Créer un objet FormData pour envoyer le contenu du formulaire
 		const formData = new FormData();
-//~ 		formData.append("content", messageContent);
 		formData.append("payload_json", JSON.stringify(jsonData));
 
 		// Récupérer l'image en tant que fichier depuis l'élément img
@@ -268,6 +267,11 @@ document.addEventListener("DOMContentLoaded", function() {
 					let sx, sy, sWidth, sHeight; // Source clipping parameters
 					let dx, dy, dWidth, dHeight; // variables pour dimensionner et positionner l'image
 
+					// Couleur de fond pour l'image
+					ctx.fillStyle = bgColorInput.value.toString(16);
+					console.log( bgColorInput.value)
+					ctx.fillRect(targetX, targetY, targetWidth, targetHeight);
+
 					switch (fitOption) {
 						case 'stretch':
 							// Étirer l'image pour remplir le cadre
@@ -318,7 +322,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				function step3() {
 					// Appliquer l'effet de réduction des couleurs directement sur cette zone du canvas
 					if(effetDessin) {
-						reduceColors(ctx, targetX, targetY, targetWidth, targetHeight, 100); // Utiliser par exemple 32 couleurs
+						reduceColors(ctx, targetX, targetY, targetWidth, targetHeight, 60); // Utiliser par exemple 32 couleurs
 					} else {
 						prog.style.width = "70%";
 						requestAnimationFrame(step4);
