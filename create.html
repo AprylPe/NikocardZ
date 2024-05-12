@@ -1,224 +1,203 @@
 <!DOCTYPE html>
-<html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Playball&display=swap" rel="stylesheet">
-	<style>
 
-.container {
-	display: flex;
-	justify-content: center;
-}
-.cardBuilder {
-	display: flex;
-	flex-direction: column;
-	width: 455px;
-	height: 620px;
-	padding: 10px;
-	border: solid 2px #000;
-	border-radius: 8px;
-	background: #fff5eb;
-}
-.cardBuilder * {
-	font-size: 16px;
-}
-#name {
-	width: 60%;
-	margin-bottom: 10px;
-	padding: 8px;
-}
-#image {
-	height: 300px;
-	margin-bottom: 10px;
-}
-#effet {
-	width: 80%;
-	height: 150px;
-	margin: 0 0 10px 10%;
-}
-.bottom {
-	display: flex;
-}
-#force, #vie {
-	flex: 1;
-	height: 80px;
-    font-size: 32px;
-    text-align: center;
-	margin-bottom: 10px;
-}
-#lore {
-	flex: 5;
-	height: 80px;
-	margin-bottom: 10px;
-}
-input, textarea {
-	border: solid 1px #808080;
-	background: #fff5eb;
-    border-radius: 8px;
-	resize: none;
-    box-shadow: 4px 4px 2px #DFC5B7;
-}
-textarea {
-	text-align: center;
-}
-img {
-	margin: auto;
-    max-width: 90%;
-    max-height: 90vh;
-}
-#cardPreview {
-    display: flex;
-}
-.loadfonts {
-	position: fixed;
-	visibility: hidden;
-	oppacity: 0;
-}
-	</style>
-	<title>Nouvelle carte</title>
+	<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Caveat+Brush&family=Playball&display=swap" rel="stylesheet">
+	<link href="public/style_create.css" rel="stylesheet">
 
+	<title>NikoCardZ - Créez vos propres cartes !</title>
+	<meta property="og:title" content="NikoCardZ - Créez vos propres cartes !" />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="https://aprylpe.github.io/NikocardZ/public/cards/back_.png" />
+	<meta property="og:description" content="Venez-en prestement vous peler le jonc en guerroyant entres Seigneureries !
+Récoltez moulte cartes de batailles et allez quérir la victoire !
+Mon joie, ma mie !" />
+	<meta property="og:site_name" content="NikoCardZ" />
+	<meta property="og:locale" content="fr_FR" />
+
+	<title>NikoCardZ - Créez vos propres cartes !</title>
 </head>
 <body>
-	<div class="loadfonts">
-		<span style="font-family: 'Caveat Brush';">a</span>
-		<span style="font-family: Playball;">a</span>
-	</div>
-	<div class="container">
-		<div class="cardBuilder">
-			<input type="text" id="name" placeholder="Nom" maxlength="30" required />
+	<header>
+		<h1>NikoCardZ</h1>
+		<h2>Créez vos propres cartes !</h2>
+	</header>
+	<main class="form">
+		<div class="cardBuilder form">
+			<input type="text" id="name" placeholder="Nom" maxlength="25" required style="font-family: 'Caveat Brush';"/>
 			<input type="file" id="image" accept="image/*" required />
-			<textarea id="effet" required>Effet : </textarea>
+			<textarea id="effet" required style="font-family: Playball;">Effet : </textarea>
 			<div class="bottom">
-				<input type="number" min="0" max="4" id="force" placeholder="Force" required />
-				<textarea id="lore" placeholder="Lore" required></textarea>
-				<input type="number" min="0" max="4" id="vie" placeholder="Vie" required />
+				<input type="number" min="0" max="4" id="force" placeholder="Force" required maxlength="1" />
+				<textarea id="lore" placeholder="Lore" required style="font-family: Playball;"></textarea>
+				<input type="number" min="0" max="4" id="vie" placeholder="Vie" required maxlength="1" />
 			</div>
 			<button id="generateButton">Générer la carte</button>
 		</div>
-	</div>
-
-	<div id="cardPreview"></div>
+		<div id="options" class="form">
+			<h2>Informations</h2>
+			<p>Cet outil ne permet de générer que des cartes Communes Normales.</p>
+			<p>Une carte commune ne peut pas avoir une force ou une vie supérieure à 4.</p>
+			<p>Les dimsensions idéales de l'image à importer sont 1471 par 1228 pixels.</p>
+			<h2>Options</h2>
+			<h3>Position de l'image</h3>
+			<form id="imageOptions">
+				<label>
+					<input type="radio" name="fit" value="stretch" checked> <b>Étirer</b>: L'image sera étirée pour s'adapter au cadre. Elle peut être déformée.<br/>
+				</label>
+				<label>
+					<input type="radio" name="fit" value="adapt"> <b>Adapter</b>: L'image est recadrée puis étirée pour s'adapter au cadre sans être déformée. Certaines zones de l'image seront donc perdues.<br/>
+				</label>
+				<label>
+					<input type="radio" name="fit" value="center"> <b>Centrer</b>: L'image est rétrécie pour s'adapter au cadre sans être déformée. Des bordures peuvent apparaître.<br/>
+				</label>
+			</form>
+			<h3>Effet</h3>
+			<label><input id="effetDessin" type="checkbox" /><b>Effet dessin</b>: réduction du nombre de couleurs</label>
+		</div>
+		<div id="cardPreview" class="form share">
+			<img src="public/cards/back_.png" />
+		</div>
+		<div class="share" id="shareDialog">
+			<h2>Partager</h2>
+			<p>Ta carte sera postée dans le salon <b>#Vos-cartes</b> sur le serveur discord.</p>
+			<p>Indique ton pseudo Twitch pour signer ta carte, et si tu veux ajoute un petit message. =)</p>
+			<div class="bottom">
+				<img width="96" height="96" src="https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_a2b08e2a08db40ff886c76a7220a59d1/default/light/4.0" id="avatar"></img>
+				<input placeholder="Pseudo Twitch" id="pseudo" />
+			</div>
+			<textarea id="message" placeholder="Message"></textarea>
+			<button id="sendButton">Envoyer</button>
+			<button id="goBack">Annuler</button>
+		</div>
+		<div class="newcard">
+			<button id="shareButton">Partager</button>
+		</div>
+		<div class="process" id="process">
+			<h2>Génération de l'image en cours...</h2>
+			<img width="112" height="112" alt"Chat qui danse" src="https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_9d758856a6544239a47fdf3bcd8f4313/animated/light/4.0"></img>
+			<div id="mainLoad" class="progress"><div style="width: 0%"></div></div>
+		</div>
+	</main>
 	<script>
+const CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko'; // s'te plait me kack pô :(
 const WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1238767593905717279/YA_YsxbnFMGQWifAjheOjA3xneZytMeAlgxMEn_fJwKuq9wV347BGkS337DiVLsA4Kip"
 const DEFAULT_AVATAR = "https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_a2b08e2a08db40ff886c76a7220a59d1/default/light/4.0"
 const BASE_IMAGE_URL = "public/cards/model.png"; // URL vers l'image du template
 
+let cardName = "";
+
 document.addEventListener("DOMContentLoaded", function() {
 
 	const generateButton = document.getElementById("generateButton");
-//~ 	const sendButton = document.getElementById("sendButton");
-//~ 	const resetButton = document.getElementById("resetButton");
-//~ 	const imagePreview = document.getElementById("imagePreview");
-//~ 	const form = document.getElementById("imageForm");
+	const shareButton = document.getElementById("shareButton");
+	const sendButton = document.getElementById("sendButton");
+	const mainElement = document.querySelector("main");
+	const pseudoInput = document.getElementById("pseudo");
+	const avatarImg = document.getElementById('avatar'); // Récupérer l'élément de l'avatar
+	const backButton = document.getElementById('goBack');
+	const messageInput = document.getElementById('message');
 
 	generateButton.addEventListener("click", generateCard);
-//~ 	sendButton.addEventListener("click", sendMessage);
-//~ 	resetButton.addEventListener("click", resetForm);
+	shareButton.addEventListener("click", () => {
+		mainElement.classList = "share";
+	});
+	backButton.addEventListener("click", () => {
+		mainElement.classList = "form";
+	});
+	sendButton.addEventListener("click", sendMessage);
+	pseudoInput.addEventListener("focusout", checkAvatar);
 
-	function generateImage() {
-		// Créer un canvas
-		const canvas = document.createElement("canvas");
-		const ctx = canvas.getContext("2d");
+	async function checkAvatar() {
+		const pseudo = pseudoInput.value; // Récupérer la valeur du pseudo
 
-		// Charger l'image de base depuis la constante en base64
-		const baseImage = new Image();
-		baseImage.src = "data:image/png;base64," + BASE_IMAGE_BASE64;
+		// Vérifier si le pseudo respecte le modèle /^[a-zA-Z0-9_]{4,25}$/
+		if (/^[a-zA-Z0-9_]{4,25}$/.test(pseudo)) {
+			// Si le pseudo est valide, construire l'URL de l'avatar correspondant
+			avatarImg.src = (await fetchAvatar(pseudo)) || DEFAULT_AVATAR;
+		} else {
+			avatarImg.src = DEFAULT_AVATAR;
+		}
+	}
 
-		baseImage.onload = function() {
-			// Dessiner l'image de base sur le canvas
-			canvas.width = baseImage.width;
-			canvas.height = baseImage.height;
-			ctx.drawImage(baseImage, 0, 0);
+	async function fetchAvatar(username) {
+		const query = JSON.stringify({
+			query: `
+				query GetUser($login: String!) {
+					user(login: $login) {
+						profileImageURL(width: 300)
+					}
+				}`,
+			variables: { login: username }
+		});
 
-			// Ajouter du texte à des coordonnées spécifiques en fonction du jour
-			ctx.textAlign = "center";
-			ctx.fillStyle = "#220000";
+		try {
+			const response = await fetch('https://gql.twitch.tv/gql', {
+				method: 'POST',
+				headers: {
+					"Accept-Language": "en-US",
+					Accept: "*/*",
+					Authorization: void 0,
+					'Content-Type': 'application/json',
+					'Client-Id': CLIENT_ID
+				},
+				body: query
+			});
 
-			const currentDate = new Date();
-			const currentDay = currentDate.getDay(); // 0 = dimanche, 1 = lundi, ..., 6 = samedi
-			const daysToAdd = (8 - currentDay) % 7;
+			const responseData = await response.json();
 
-			for (let dayIndex = 0; dayIndex < days.length; dayIndex++) {
-				// Calculer la date du jour en cours
-				const dayDate = new Date(currentDate);
-				dayDate.setDate(currentDate.getDate() + daysToAdd + dayIndex);
+			console.log('Twitch API Response:', response.status, responseData);
 
-				const dayNumber = dayDate.getDate();
-
-				ctx.font = "64px Impact";
-				// Vérifier si une heure de début est définie
-				const startTime = form[`${days[dayIndex].name}StartTime`].value;
-				if (!startTime) {
-					ctx.fillStyle = "#808080";
-					ctx.fillText(`${days[dayIndex].display} ${dayNumber}`, days[dayIndex].x, days[dayIndex].y);
-					ctx.font = "48px Arial";
-					ctx.fillText("Pas de live", days[dayIndex].x, days[dayIndex].y + 64);
-					ctx.fillStyle = "#220000";
-					continue; // Passer au jour suivant
-				}
-				ctx.fillText(`${days[dayIndex].display} ${dayNumber}`, days[dayIndex].x, days[dayIndex].y);
-				ctx.font = "64px Arial";
-
-				// Ajouter la deuxième ligne de texte
-				const endTime = form[`${days[dayIndex].name}EndTime`].value;
-				const startHours = startTime.split(":")[0];
-				const startMinutes = startTime.split(":")[1];
-				const endHours = endTime ? endTime.split(":")[0] : "";
-				const endMinutes = endTime ? endTime.split(":")[1] : "";
-				const meetingTime = `${startHours}h${startMinutes>0?startMinutes:""}` + (endHours ? ` - ${endHours}h${endMinutes>0?endMinutes:""}` : "");
-				if(meetingTime.length > 8) {
-					ctx.font = "48px Arial";
-				}
-				ctx.fillText(meetingTime, days[dayIndex].x, days[dayIndex].y + 64);
-
-				// Ajouter la troisième ligne si un commentaire est défini
-				var comment = form[`${days[dayIndex].name}Theme`].value;
-				var comment2 = form[`${days[dayIndex].name}Theme2`].value;
-				if(!comment && comment2) {
-					comment = comment2
-					comment2 = null
-				}
-				if (comment) {
-					ctx.font = (comment.lenght>16?"40":"48") + "px Arial";
-					ctx.fillText(comment, days[dayIndex].x, days[dayIndex].y + 128);
-				}
-				if (comment2) {
-					ctx.font = (comment2.lenght>16?"40":"48") + "px Arial";
-					ctx.fillText(comment2, days[dayIndex].x, days[dayIndex].y + 192);
-				}
+			if (response.status === 200 && responseData.data && responseData.data.user) {
+				return responseData.data.user.profileImageURL;
 			}
-
-			// Convertir le canvas en image en base64
-			const generatedImageURL = canvas.toDataURL("image/png");
-
-			// Afficher l'image générée dans la zone de prévisualisation
-			const imageElement = document.createElement("img");
-			imageElement.src = generatedImageURL;
-			imagePreview.innerHTML = ""; // Effacer la prévisualisation précédente
-			imagePreview.appendChild(imageElement);
-		};
+		} catch (error) {
+			console.error('Error fetching avatar for user', username, ':', error);
+			return DEFAULT_AVATAR;
+		}
 	}
 
 	function sendMessage() {
-		const confirmMessage = confirm("Êtes-vous sûr(e) que l'image vous convient ?");
+		if(!pseudoInput.value.match(/.{1,40}/)) {
+			pseudoInput.setCustomValidity("Veuillez saisir un pseudo valide");
+			pseudoInput.reportValidity();
+			return;
+		}
+		const confirmMessage = confirm("Es-tu sûr(e) que l'image te convient ?");
 
 		if (!confirmMessage) {
 			return;
 		}
-
-		const messageContent = document.getElementById("message").value;
+//~ '<:PopcornJoy:1012062551179264081> '
+		let jsonData = {
+			avatar_url: avatarImg.src,
+			username: pseudoInput.value,
+			embeds: [{
+				color: 15158332,
+				title: `${pseudoInput.value} a créé une nouvelle carte !`,
+				description: messageInput.value,
+				author: {
+					name: pseudoInput.value,
+					url: avatarImg.src
+				},
+				image: {
+					url: `attachment://${(cardName || 'carte')}.png`
+				}
+			}]
+		}
+//~ 		const messageContent = document.getElementById("message").value;
 
 		// Créer un objet FormData pour envoyer le contenu du formulaire
 		const formData = new FormData();
-		formData.append("content", messageContent);
+//~ 		formData.append("content", messageContent);
+		formData.append("payload_json", JSON.stringify(jsonData));
 
 		// Récupérer l'image en tant que fichier depuis l'élément img
-		const imageDataURL = document.querySelector("#imagePreview img").src;
+		const imageDataURL = document.querySelector("#cardPreview img").src;
 		const imageBlob = dataURLtoBlob(imageDataURL);
-		formData.append("file", imageBlob, "image.png");
+		formData.append("file", imageBlob, (cardName || 'carte') + ".png");
 
 		// Envoyer le formulaire au webhook Discord
 		fetch(WEBHOOK_DISCORD, {
@@ -227,7 +206,10 @@ document.addEventListener("DOMContentLoaded", function() {
 		})
 			.then(response => {
 				if (response.ok) {
-					alert("Message envoyé avec succès !");
+					mainElement.classList = "form";
+					requestAnimationFrame(() => {
+						alert("Message envoyé avec succès !");
+					});
 				} else {
 					alert("Une erreur est survenue lors de l'envoi du message.");
 				}
@@ -266,102 +248,198 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 
 	function generateCard() {
-		const name = document.getElementById('name').value;
-		let userImg;
-		try {
-			userImg = URL.createObjectURL(document.getElementById('image').files[0]);
-		} catch(e) {
-			document.getElementById('image').setCustomValidity("Veuillez choisir une image");
-			document.getElementById('image').reportValidity();
-			return
-		}
-		const effect = document.getElementById('effet').value.match(/[^\n]+/g);
-		const lore = document.getElementById('lore').value.match(/[^\n]+/g);
-		const force = document.getElementById('force').value;
-		const vie = document.getElementById('vie').value;
+		mainElement.classList = "process";
 
-		if(!/^.{1,30}$/.test(name)) {
-			document.getElementById('name').reportValidity();
-			return;
-		}
-		console.log("a")
-		if(!["0","1","2","3","4"].includes(force)) {
-			document.getElementById('force').reportValidity();
-			return
-		}
-		console.log(0)
-		if(!["0","1","2","3","4"].includes(vie)) {
-			document.getElementById('vie').reportValidity();
-			return
-		}
-		console.log(1)
+		const prog = document.querySelector('#mainLoad>div');
+		prog.style.width = "1%";
 
-		const resources = [
-			loadImage('public/create/fond.png'),
-			loadImage('public/create/masque.png'),
-			loadImage(`public/create/F${force}.png`),
-			loadImage(`public/create/V${vie}.png`),
-			loadImage(userImg)
-		];
-		console.log(2)
+		requestAnimationFrame(() => {
+			const targetX = 12;  // Position X où l'image doit être dessinée
+			const targetY = 259; // Position Y où l'image doit être dessinée
+			const targetWidth = 1471; // Largeur du cadre
+			const targetHeight = 1228; // Hauteur du cadre
 
-		Promise.all(resources).then(values => {
-		console.log(3)
-			const [background, masque1, masque2, masque3, illustration] = values;
-
-			// Tous vos chargements sont terminés, continuez à utiliser les ressources ici
-			const canvas = document.createElement('canvas');
-			const ctx = canvas.getContext('2d');
-			canvas.width = 1495;
-			canvas.height = 2062;
-
-			// Fond
-			ctx.drawImage(background, 0, 0);
-
-			// Nom de la carte
-			const name = document.getElementById('name').value
-			ctx.fillStyle = '#fff5ed';
-			ctx.fillRect(80, 90, 40 * name.length, 70);
-
-			ctx.font = '96px "Caveat Brush"';
-			ctx.textAlign = 'left';
-			ctx.fillStyle = '#dfc5b7';
-			ctx.fillText(name, 86, 166); // Ombre
-			ctx.fillStyle = '#000000';
-			ctx.fillText(name, 80, 160); // Text
-
-			// Image de l'utilisateur
-			ctx.drawImage(illustration, 12, 259, 1471, 1228); // Ajuster les coordonnées et dimensions
-
-			// Effet
-			ctx.font = 'bold 72px Playball';
-			ctx.textAlign = 'center';
-			console.log(effect)
-			for(let i = 0; i < effect.length && i < 3; i++) {
-				ctx.fillStyle = '#ffbe7c';
-				ctx.fillText(effect[i], 752, (effect.length < 3 ? 1604 : 1572) + 80*i, i == 0 ? 1400 : 800, 100); // Ombre
-				ctx.fillStyle = '#000000';
-				ctx.fillText(effect[i], 748, (effect.length < 3 ? 1600 : 1568) + 80*i, i == 0 ? 1400 : 800, 100); // Texte
+			const name = document.getElementById('name').value;
+			cardName = name.replace(/[^a-zA-Z0-9_]+/g, "-").replace(/--+/g, "-").replace(/(^-|-$)/g, "");
+			let userImg;
+			try {
+				userImg = URL.createObjectURL(document.getElementById('image').files[0]);
+			} catch(e) {
+				document.getElementById('image').setCustomValidity("Veuillez choisir une image");
+				document.getElementById('image').reportValidity();
+				mainElement.classList = "form";
+				return
 			}
-			// Lore
-			ctx.font = '64px Playball';
-			ctx.textAlign = 'center';
-			for(let i = 0; i < lore.length && i < 2; i++) {
-				ctx.fillStyle = '#ffbe7c';
-				ctx.fillText(lore[i], 762, 1824 + 72*i, 700, 100); // Ombre
-				ctx.fillStyle = '#000000';
-				ctx.fillText(lore[i], 758, 1820 + 72*i, 700, 100); // Texte
+			const effect = document.getElementById('effet').value.match(/[^\n]+/g);
+			const lore = document.getElementById('lore').value.match(/[^\n]+/g);
+			const force = document.getElementById('force').value;
+			const vie = document.getElementById('vie').value;
+			const fitOption = document.querySelector('input[name="fit"]:checked').value;
+			const effetDessin = document.getElementById('effetDessin').checked;
+
+			prog.style.width = "2%";
+
+			if(!/^.{1,25}$/.test(name)) {
+				document.getElementById('name').reportValidity();
+				mainElement.classList = "form";
+				return;
+			}
+			if(!["0","1","2","3","4"].includes(force)) {
+				document.getElementById('force').reportValidity();
+				mainElement.classList = "form";
+				return
+			}
+			if(!["0","1","2","3","4"].includes(vie)) {
+				document.getElementById('vie').reportValidity();
+				mainElement.classList = "form";
+				return
+			}
+			if(!effect) {
+				document.getElementById('effet').reportValidity();
+				mainElement.classList = "form";
+				return;
+			}
+			if(!lore) {
+				document.getElementById('lore').reportValidity();
+				mainElement.classList = "form";
+				return;
 			}
 
-			ctx.drawImage(masque1, 0, 0);
-			ctx.drawImage(masque2, 0, 1662);
-			ctx.drawImage(masque3, 1095, 1662);
+			const resources = [
+				loadImage('public/create/fond.png'),
+				loadImage('public/create/masque.png'),
+				loadImage(`public/create/F${force}.png`),
+				loadImage(`public/create/V${vie}.png`),
+				loadImage(userImg)
+			];
 
-			const cardImageURL = canvas.toDataURL('image/png');
-			document.getElementById('cardPreview').innerHTML = `<img src="${cardImageURL}" />`;  // Afficher l'image générée
-		}).catch(error => {
-			console.error('Failed to load one or more resources:', error);
+			prog.style.width = "3%";
+
+			Promise.all(resources).then(values => {
+				prog.style.width = "10%";
+				const [background, masque1, masque2, masque3, userImage] = values;
+
+				// Tous vos chargements sont terminés, continuez à utiliser les ressources ici
+				const canvas = document.createElement('canvas');
+				const ctx = canvas.getContext('2d');
+				canvas.width = 1495;
+				canvas.height = 2062;
+
+				// Fond
+				ctx.drawImage(background, 0, 0);
+
+				// Nom de la carte
+				const name = document.getElementById('name').value
+				ctx.fillStyle = '#fff5ed';
+				ctx.fillRect(80, 90, 40 * name.length, 70);
+
+				ctx.font = '96px "Caveat Brush"';
+				ctx.textAlign = 'left';
+				ctx.fillStyle = '#dfc5b7';
+				ctx.fillText(name, 86, 166); // Ombre
+				ctx.fillStyle = '#000000';
+				ctx.fillText(name, 80, 160); // Text
+
+				// Image de l'utilisateur
+				let sx, sy, sWidth, sHeight; // Source clipping parameters
+				let dx, dy, dWidth, dHeight; // variables pour dimensionner et positionner l'image
+
+				switch (fitOption) {
+					case 'stretch':
+						// Étirer l'image pour remplir le cadre
+						dx = targetX;
+						dy = targetY;
+						dWidth = targetWidth;
+						dHeight = targetHeight;
+						ctx.drawImage(userImage, dx, dy, dWidth, dHeight);
+						break;
+					case 'adapt':
+						// Adapter (recadrer pour correspondre puis étirer)
+						let srcRatio = userImage.width / userImage.height;
+						let targetRatio = targetWidth / targetHeight;
+						if (srcRatio > targetRatio) {
+							// L'image est trop large. Recadrer horizontalement
+							sHeight = userImage.height;
+							sWidth = userImage.height * targetRatio;
+							sx = (userImage.width - sWidth) / 2;
+							sy = 0;
+						} else {
+							// L'image est trop haute. Recadrer verticalement
+							sWidth = userImage.width;
+							sHeight = userImage.width / targetRatio;
+							sx = 0;
+							sy = (userImage.height - sHeight) / 2;
+						}
+						dx = targetX;
+						dy = targetY;
+						dWidth = targetWidth;
+						dHeight = targetHeight;
+						ctx.drawImage(userImage, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+						break;
+					case 'center':
+						// Adapter l'image pour qu'elle tienne dans le cadre sans déformation
+						const ratio = Math.min(targetWidth / userImage.width, targetHeight / userImage.height);
+						dWidth = userImage.width * ratio;
+						dHeight = userImage.height * ratio;
+						dx = targetX + (targetWidth - dWidth) / 2;
+						dy = targetY + (targetHeight - dHeight) / 2;
+						ctx.drawImage(userImage, dx, dy, dWidth, dHeight);
+						break;
+				}
+
+				// Appliquer l'effet de réduction des couleurs directement sur cette zone du canvas
+
+				if(effetDessin) reduceColors(ctx, targetX, targetY, targetWidth, targetHeight, 8); // Utiliser par exemple 32 couleurs
+
+				// Effet
+				ctx.font = 'bold 72px Playball';
+				ctx.textAlign = 'center';
+				for(let i = 0; i < effect.length && i < 3; i++) {
+					ctx.fillStyle = '#ffbe7c';
+					ctx.fillText(effect[i], 752, (effect.length < 3 ? 1604 : 1572) + 80*i, i == 0 ? 1400 : 800, 100); // Ombre
+					ctx.fillStyle = '#000000';
+					ctx.fillText(effect[i], 748, (effect.length < 3 ? 1600 : 1568) + 80*i, i == 0 ? 1400 : 800, 100); // Texte
+				}
+				// Lore
+				ctx.font = '64px Playball';
+				ctx.textAlign = 'center';
+				for(let i = 0; i < lore.length && i < 2; i++) {
+					ctx.fillStyle = '#ffbe7c';
+					ctx.fillText(lore[i], 762, (lore.length < 3 ? 1854 : 1824) + 72*i, 700, 100); // Ombre
+					ctx.fillStyle = '#000000';
+					ctx.fillText(lore[i], 758, (lore.length < 3 ? 1850 : 1820) + 72*i, 700, 100); // Texte
+				}
+
+				ctx.drawImage(masque1, 0, 0);
+				ctx.drawImage(masque2, 0, 1662);
+				ctx.drawImage(masque3, 1095, 1662);
+
+				const cardImageURL = canvas.toDataURL('image/png');
+				document.getElementById('cardPreview').innerHTML = `<img src="${cardImageURL}" />`;  // Afficher l'image générée
+				mainElement.classList = "form newcard";
+			}).catch(error => {
+				console.error('Failed to load one or more resources:', error);
+				mainElement.classList = "form";
+			});
 		});
+
+		function reduceColors(ctx, x, y, width, height, numColors) {
+			// Obtenir les données de l'image pour la zone spécifiée
+			let imageData = ctx.getImageData(x, y, width, height);
+			let data = imageData.data;
+			let factor = 255 / numColors; // Calculer le facteur de réduction
+
+			// Appliquer la réduction de couleurs uniquement dans cette zone
+			for (let i = 0; i < data.length; i += 4) {
+				data[i] = Math.floor(data[i] / factor) * factor;   // Red
+				data[i + 1] = Math.floor(data[i + 1] / factor) * factor; // Green
+				data[i + 2] = Math.floor(data[i + 2] / factor) * factor; // Blue
+				// Note: The alpha channel (data[i + 3]) is not modified
+			}
+
+			// Remettre les données de l'image modifiées dans le canvas
+			ctx.putImageData(imageData, x, y);
+		}
 	}
 });
 
