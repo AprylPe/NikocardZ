@@ -1,5 +1,5 @@
 const CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko'; // s'te plait me kack pô :(
-const WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1238767593905717279/YA_YsxbnFMGQWifAjheOjA3xneZytMeAlgxMEn_fJwKuq9wV347BGkS337DiVLsA4Kip"
+const WEBHOOK_DISCORD = "https://discord.com/api/webhooks/1239224649485914212/V1RSuCfZ6eVeEPvIftkkZlrCI2MUFR7i6vZVZPObhVRFyBZWqoUOBeBC8FuRsj0Izvk7"
 const DEFAULT_AVATAR = "https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_a2b08e2a08db40ff886c76a7220a59d1/default/light/4.0"
 const BASE_IMAGE_URL = "public/cards/model.png"; // URL vers l'image du template
 
