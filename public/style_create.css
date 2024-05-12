@@ -112,7 +112,7 @@ header h2 {
 #force, #vie {
 	flex: 1;
 	height: 80px;
-    font-size: 32px;
+    font-size: 24px;
     text-align: center;
 	margin-bottom: 10px;
     width: 80px;
@@ -211,4 +211,8 @@ div.newcard button {
     height: 190px;
 	text-align: left;
 	padding: 10px;
+}
+
+p {
+	margin: 4px 0;
 }

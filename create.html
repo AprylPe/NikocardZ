@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,10 +45,10 @@ Mon joie, ma mie !" />
 			<h3>Position de l'image</h3>
 			<form id="imageOptions">
 				<label>
-					<input type="radio" name="fit" value="stretch" checked> <b>Étirer</b>: L'image sera étirée pour s'adapter au cadre. Elle peut être déformée.<br/>
+					<input type="radio" name="fit" value="stretch"> <b>Étirer</b>: L'image sera étirée pour s'adapter au cadre. Elle peut être déformée.<br/>
 				</label>
 				<label>
-					<input type="radio" name="fit" value="adapt"> <b>Adapter</b>: L'image est recadrée puis étirée pour s'adapter au cadre sans être déformée. Certaines zones de l'image seront donc perdues.<br/>
+					<input type="radio" name="fit" value="adapt" checked> <b>Adapter</b>: L'image est recadrée puis étirée pour s'adapter au cadre sans être déformée. Certaines zones de l'image seront donc perdues.<br/>
 				</label>
 				<label>
 					<input type="radio" name="fit" value="center"> <b>Centrer</b>: L'image est rétrécie pour s'adapter au cadre sans être déformée. Des bordures peuvent apparaître.<br/>
@@ -325,121 +325,254 @@ document.addEventListener("DOMContentLoaded", function() {
 				canvas.width = 1495;
 				canvas.height = 2062;
 
-				// Fond
-				ctx.drawImage(background, 0, 0);
+				requestAnimationFrame(step1);
 
-				// Nom de la carte
-				const name = document.getElementById('name').value
-				ctx.fillStyle = '#fff5ed';
-				ctx.fillRect(80, 90, 40 * name.length, 70);
+				function step1() {
+					// Fond
+					ctx.drawImage(background, 0, 0);
 
-				ctx.font = '96px "Caveat Brush"';
-				ctx.textAlign = 'left';
-				ctx.fillStyle = '#dfc5b7';
-				ctx.fillText(name, 86, 166); // Ombre
-				ctx.fillStyle = '#000000';
-				ctx.fillText(name, 80, 160); // Text
+					// Nom de la carte
+					const name = document.getElementById('name').value
+					ctx.fillStyle = '#fff5ed';
+					ctx.fillRect(80, 90, 40 * name.length, 70);
 
-				// Image de l'utilisateur
-				let sx, sy, sWidth, sHeight; // Source clipping parameters
-				let dx, dy, dWidth, dHeight; // variables pour dimensionner et positionner l'image
+					ctx.font = '96px "Caveat Brush"';
+					ctx.textAlign = 'left';
+					ctx.fillStyle = '#dfc5b7';
+					ctx.fillText(name, 86, 166); // Ombre
+					ctx.fillStyle = '#000000';
+					ctx.fillText(name, 80, 160); // Text
 
-				switch (fitOption) {
-					case 'stretch':
-						// Étirer l'image pour remplir le cadre
-						dx = targetX;
-						dy = targetY;
-						dWidth = targetWidth;
-						dHeight = targetHeight;
-						ctx.drawImage(userImage, dx, dy, dWidth, dHeight);
-						break;
-					case 'adapt':
-						// Adapter (recadrer pour correspondre puis étirer)
-						let srcRatio = userImage.width / userImage.height;
-						let targetRatio = targetWidth / targetHeight;
-						if (srcRatio > targetRatio) {
-							// L'image est trop large. Recadrer horizontalement
-							sHeight = userImage.height;
-							sWidth = userImage.height * targetRatio;
-							sx = (userImage.width - sWidth) / 2;
-							sy = 0;
-						} else {
-							// L'image est trop haute. Recadrer verticalement
-							sWidth = userImage.width;
-							sHeight = userImage.width / targetRatio;
-							sx = 0;
-							sy = (userImage.height - sHeight) / 2;
+					prog.style.width = effetDessin ? "15%" : "25%";
+					requestAnimationFrame(step2);
+				}
+
+				function step2() {
+					// Image de l'utilisateur
+					let sx, sy, sWidth, sHeight; // Source clipping parameters
+					let dx, dy, dWidth, dHeight; // variables pour dimensionner et positionner l'image
+
+					switch (fitOption) {
+						case 'stretch':
+							// Étirer l'image pour remplir le cadre
+							dx = targetX;
+							dy = targetY;
+							dWidth = targetWidth;
+							dHeight = targetHeight;
+							ctx.drawImage(userImage, dx, dy, dWidth, dHeight);
+							break;
+						case 'adapt':
+							// Adapter (recadrer pour correspondre puis étirer)
+							let srcRatio = userImage.width / userImage.height;
+							let targetRatio = targetWidth / targetHeight;
+							if (srcRatio > targetRatio) {
+								// L'image est trop large. Recadrer horizontalement
+								sHeight = userImage.height;
+								sWidth = userImage.height * targetRatio;
+								sx = (userImage.width - sWidth) / 2;
+								sy = 0;
+							} else {
+								// L'image est trop haute. Recadrer verticalement
+								sWidth = userImage.width;
+								sHeight = userImage.width / targetRatio;
+								sx = 0;
+								sy = (userImage.height - sHeight) / 2;
+							}
+							dx = targetX;
+							dy = targetY;
+							dWidth = targetWidth;
+							dHeight = targetHeight;
+							ctx.drawImage(userImage, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+							break;
+						case 'center':
+							// Adapter l'image pour qu'elle tienne dans le cadre sans déformation
+							const ratio = Math.min(targetWidth / userImage.width, targetHeight / userImage.height);
+							dWidth = userImage.width * ratio;
+							dHeight = userImage.height * ratio;
+							dx = targetX + (targetWidth - dWidth) / 2;
+							dy = targetY + (targetHeight - dHeight) / 2;
+							ctx.drawImage(userImage, dx, dy, dWidth, dHeight);
+							break;
+					}
+
+					prog.style.width = effetDessin ? "20%" : "40%";
+					requestAnimationFrame(step3);
+				}
+
+				function step3() {
+					// Appliquer l'effet de réduction des couleurs directement sur cette zone du canvas
+					if(effetDessin) {
+						reduceColors(ctx, targetX, targetY, targetWidth, targetHeight, 100); // Utiliser par exemple 32 couleurs
+					} else {
+						prog.style.width = "70%";
+						requestAnimationFrame(step4);
+					}
+				}
+
+				function step4() {
+					// Effet
+					ctx.font = 'bold 72px Playball';
+					ctx.textAlign = 'center';
+					for(let i = 0; i < effect.length && i < 3; i++) {
+						ctx.fillStyle = '#ffbe7c';
+						ctx.fillText(effect[i], 752, (effect.length < 3 ? 1604 : 1572) + 80*i, i == 0 ? 1400 : 800, 100); // Ombre
+						ctx.fillStyle = '#000000';
+						ctx.fillText(effect[i], 748, (effect.length < 3 ? 1600 : 1568) + 80*i, i == 0 ? 1400 : 800, 100); // Texte
+					}
+					// Lore
+					ctx.font = '64px Playball';
+					ctx.textAlign = 'center';
+					for(let i = 0; i < lore.length && i < 2; i++) {
+						ctx.fillStyle = '#ffbe7c';
+						ctx.fillText(lore[i], 762, (lore.length < 3 ? 1854 : 1824) + 72*i, 700, 100); // Ombre
+						ctx.fillStyle = '#000000';
+						ctx.fillText(lore[i], 758, (lore.length < 3 ? 1850 : 1820) + 72*i, 700, 100); // Texte
+					}
+
+					prog.style.width = effetDessin ? "90%" : "80%";
+					requestAnimationFrame(step5);
+				}
+				function step5() {
+					ctx.drawImage(masque1, 0, 0);
+					ctx.drawImage(masque2, 0, 1662);
+					ctx.drawImage(masque3, 1095, 1662);
+
+					prog.style.width = effetDessin ? "95%" : "90%";
+					requestAnimationFrame(step6);
+				}
+				function step6() {
+					const cardImageURL = canvas.toDataURL('image/png');
+					document.getElementById('cardPreview').innerHTML = `<img src="${cardImageURL}" />`;  // Afficher l'image générée
+					mainElement.classList = "form newcard";
+				}
+
+				function reduceColors(ctx, x, y, width, height, numColors) {
+					let imageData = ctx.getImageData(x, y, width, height);
+					let data = imageData.data;
+
+					prog.style.width = "22%";
+					requestAnimationFrame(() => {
+						// Step 1: Calculate color frequency
+						let colorFreq = {};
+						for (let i = 0; i < data.length; i += 4) {
+							if(data[i + 3] == 255) {
+			//~ 					const group = "" + (data[i] >> 4).toString(16) + (data[i + 1] >> 4).toString(16) + (data[i + 2] >> 4).toString(16);
+			//~ 					const color = "" + (data[i]).toString(16) + (data[i + 1]).toString(16) + (data[i + 2]).toString(16);
+								let color = `${(data[i] >> 4) << 4},${(data[i + 1] >> 4) << 4},${(data[i + 2] >> 4) << 4}`;
+								colorFreq[color] = (colorFreq[color] || 0) + 1;
+							}
 						}
-						dx = targetX;
-						dy = targetY;
-						dWidth = targetWidth;
-						dHeight = targetHeight;
-						ctx.drawImage(userImage, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-						break;
-					case 'center':
-						// Adapter l'image pour qu'elle tienne dans le cadre sans déformation
-						const ratio = Math.min(targetWidth / userImage.width, targetHeight / userImage.height);
-						dWidth = userImage.width * ratio;
-						dHeight = userImage.height * ratio;
-						dx = targetX + (targetWidth - dWidth) / 2;
-						dy = targetY + (targetHeight - dHeight) / 2;
-						ctx.drawImage(userImage, dx, dy, dWidth, dHeight);
-						break;
+
+						prog.style.width = "24%";
+						requestAnimationFrame(() => {
+							// Step 2: Group colors into clusters
+							let colors = Object.keys(colorFreq);
+
+							if (colors.length <= numColors) {
+								// Si la liste est trop petite, nous avons déjà le bon nombre de couleurs et nous pouvons quitter
+								requestAnimationFrame(step4);
+								return;
+							}
+							let freqs = Object.values(colorFreq).sort((a, b) => b - a); // Trier les entrées par fréquence
+
+							let thresholdFreq = freqs[numColors - 1]; // Déterminer le seuil à partir de la numColors-ème entrée dans la liste
+							console.log(thresholdFreq)
+
+							prog.style.width = "26%";
+							requestAnimationFrame(() => {
+								// Regrouper les couleurs en utilisant le seuil
+								let clusters = [];
+								for (let color of colors) {
+									let freq = colorFreq[color];
+									if (freq > thresholdFreq) {
+										// Si la fréquence de la couleur est supérieure ou égale au seuil, ajouter cette couleur au cluster actuel
+										clusters.push(color);
+									}
+								}
+								console.log(clusters)
+
+								// Step 3 & 4: Assign each pixel to the nearest cluster
+								let i = 0;
+								processPixel();
+
+								function processPixel() {
+									while(i < data.length) {
+										if(data[i + 3] == 255) {
+											let color = `${(data[i] >> 4) << 4},${(data[i + 1] >> 4) << 4},${(data[i + 2] >> 4) << 4}`;
+											let nearestCluster = findNearestCluster(color, clusters);
+
+											data[i] = nearestCluster[0] | nearestCluster[0] >> 4;    // Red
+											data[i + 1] = nearestCluster[1] | nearestCluster[1] >> 4; // Green
+											data[i + 2] = nearestCluster[2] | nearestCluster[2] >> 4; // Blue
+										} else {
+											data[i] = 0;
+											data[i + 1] = 0;
+											data[i + 2] = 0;
+											data[i + 3] = 0;
+										}
+
+										i += 4;
+										if(i%(1 << 16) == 0) break;
+									}
+									if(i < data.length) {
+										prog.style.width = "" + Math.round(300 + 600 * i / data.length)/10 + "%";
+										requestAnimationFrame(processPixel);
+									} else {
+										ctx.putImageData(imageData, x, y);
+										requestAnimationFrame(step4);
+									}
+								}
+							})
+						})
+					})
+
+
+					function findNearestCluster(color, clusters) {
+						let rgb = color.split(',').map(Number);
+						if(clusters.includes(color)) return rgb;
+
+						let minDistance = Infinity;
+						let nearestCluster = null;
+
+						for (let cluster of clusters) {
+							let clusterColor = cluster.split(',').map(Number);
+							let distance = colorDistance(rgb, clusterColor);
+
+							if (distance < minDistance) {
+								minDistance = distance;
+								nearestCluster = clusterColor;
+							}
+							if(minDistance == 0) break;
+		 					if(minDistance < 50) break;
+						}
+
+						return nearestCluster;
+					}
+
+					function colorDistance(color1, color2) {
+						let r1 = color1[0];
+						let g1 = color1[1];
+						let b1 = color1[2];
+
+						let r2 = color2[0];
+						let g2 = color2[1];
+						let b2 = color2[2];
+
+						let dr = r1 - r2;
+						let dg = g1 - g2;
+						let db = b1 - b2;
+
+						let d = r1 + g1 + b1 - r2 - g2 - b2;
+
+						return (dr * dr + dg * dg + db * db + d * d);
+					}
+
 				}
-
-				// Appliquer l'effet de réduction des couleurs directement sur cette zone du canvas
-
-				if(effetDessin) reduceColors(ctx, targetX, targetY, targetWidth, targetHeight, 8); // Utiliser par exemple 32 couleurs
-
-				// Effet
-				ctx.font = 'bold 72px Playball';
-				ctx.textAlign = 'center';
-				for(let i = 0; i < effect.length && i < 3; i++) {
-					ctx.fillStyle = '#ffbe7c';
-					ctx.fillText(effect[i], 752, (effect.length < 3 ? 1604 : 1572) + 80*i, i == 0 ? 1400 : 800, 100); // Ombre
-					ctx.fillStyle = '#000000';
-					ctx.fillText(effect[i], 748, (effect.length < 3 ? 1600 : 1568) + 80*i, i == 0 ? 1400 : 800, 100); // Texte
-				}
-				// Lore
-				ctx.font = '64px Playball';
-				ctx.textAlign = 'center';
-				for(let i = 0; i < lore.length && i < 2; i++) {
-					ctx.fillStyle = '#ffbe7c';
-					ctx.fillText(lore[i], 762, (lore.length < 3 ? 1854 : 1824) + 72*i, 700, 100); // Ombre
-					ctx.fillStyle = '#000000';
-					ctx.fillText(lore[i], 758, (lore.length < 3 ? 1850 : 1820) + 72*i, 700, 100); // Texte
-				}
-
-				ctx.drawImage(masque1, 0, 0);
-				ctx.drawImage(masque2, 0, 1662);
-				ctx.drawImage(masque3, 1095, 1662);
-
-				const cardImageURL = canvas.toDataURL('image/png');
-				document.getElementById('cardPreview').innerHTML = `<img src="${cardImageURL}" />`;  // Afficher l'image générée
-				mainElement.classList = "form newcard";
 			}).catch(error => {
 				console.error('Failed to load one or more resources:', error);
 				mainElement.classList = "form";
 			});
 		});
-
-		function reduceColors(ctx, x, y, width, height, numColors) {
-			// Obtenir les données de l'image pour la zone spécifiée
-			let imageData = ctx.getImageData(x, y, width, height);
-			let data = imageData.data;
-			let factor = 255 / numColors; // Calculer le facteur de réduction
-
-			// Appliquer la réduction de couleurs uniquement dans cette zone
-			for (let i = 0; i < data.length; i += 4) {
-				data[i] = Math.floor(data[i] / factor) * factor;   // Red
-				data[i + 1] = Math.floor(data[i + 1] / factor) * factor; // Green
-				data[i + 2] = Math.floor(data[i + 2] / factor) * factor; // Blue
-				// Note: The alpha channel (data[i + 3]) is not modified
-			}
-
-			// Remettre les données de l'image modifiées dans le canvas
-			ctx.putImageData(imageData, x, y);
-		}
 	}
 });
 
