@@ -770,9 +770,10 @@ div.stats {
 	justify-items: center;
 }
 #page-2 .album-page-grid {
-    gap: 0;
-    grid-template-columns: auto auto;
-    justify-content: center;
+	gap: 0;
+	grid-template-columns: auto auto;
+	justify-content: center;
+	align-content: space-around;
 }
 
 .album-page #card-48, .album-page #card-51 {
