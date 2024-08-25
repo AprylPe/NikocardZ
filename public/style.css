@@ -1,3 +1,7 @@
+@font-face {
+  font-family: arcade;
+  src: url(arcade.regular.ttf);
+}
 
 body {
 	margin: 0;
@@ -320,7 +324,7 @@ img:hover + .card-count {
 }
 .card-count {
 	display: none;
-	margin: 16vh 6px 0 0;
+	margin: 15vh 6px 0 0;
 	position: fixed;
 	z-index: 30;
 	color: #fff;
@@ -504,10 +508,17 @@ div.stats {
 .cardList .cardRender.Rare {
 	border-color: #4bf;
 	background: #123;
+	order: 2;
+}
+.cardList .cardRender.Epique {
+	border-color: #f6f;
+	background: #313;
+	order: 3;
 }
 .cardList .cardRender.Legendaire {
 	border-color: #ff8;
 	background: #221;
+	order: 4;
 }
 
 .cardRender .card {
@@ -797,17 +808,17 @@ div.stats {
 
 /* Affichage spécial */
 
-#page-7 .album-page-grid, #page-8 .album-page-grid {
+#page-7 .album-page-grid, #page-8 .album-page-grid, #page-9 .album-page-grid, #page-10 .album-page-grid {
 	grid-template-columns: auto auto;
-	width: 31vh;
-	margin: 0 8.25vh;
 	justify-items: center;
+	justify-content: center;
+	align-content: center;
 }
 #page-2 .album-page-grid {
 	gap: 0;
 	grid-template-columns: auto auto;
 	justify-content: center;
-	align-content: space-around;
+	align-content: space-evenly;
 }
 
 .album-page #card-48, .album-page #card-51 {
@@ -819,6 +830,29 @@ div.stats {
 }
 .album-page #card-48.unlocked:hover, .album-page #card-51.unlocked:hover {
 	transform: scale(1.1);
+}
+
+#page-2.album-page .card,
+#page-6.album-page .card,
+#page-7.album-page .card,
+#page-8.album-page .card,
+#page-9.album-page .card {
+	max-height: 24vh;
+	max-width: 17.4vh;
+}
+#page-2 .card-count,
+#page-6 .card-count,
+#page-7 .card-count,
+#page-8 .card-count,
+#page-9 .card-count {
+	margin: 22vh 6px 0 0;
+}
+#card-22, #card-37, #card-52 {
+	grid-column: 1;
+}
+#card-16, #card-17, #card-19, #card-20,
+#card-34, #card-35, #card-40, #card-41, #card-43, #card-44 {
+	margin: 0 -8vh 0 8vh;
 }
 
 /*.album-page #card-7, .album-page #card-8, .album-page #card-9 {
@@ -839,6 +873,9 @@ div.stats {
 }
 .Rare .progress>div {
 	background-color: #08e;
+}
+.Epique .progress>div {
+	background-color: #f6f;
 }
 .Legendaire .progress>div {
 	background-color: #d83;
