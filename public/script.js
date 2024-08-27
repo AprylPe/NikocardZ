@@ -806,6 +806,35 @@ document.addEventListener('DOMContentLoaded', async function () {
 	<input type="text" id="start-name" placeholder="Votre pseudo Twitch">
 	<div id="start-dropDown"></div>`;
 	initInput();
+
+
+	(end => {
+		let display = "";
+		let container = document.getElementById("timer");
+		function refresh() {
+			let d = Math.floor((end - Date.now())/ 1000);
+			if(d < 0) d = 0;
+			let s = d % 60;
+			d = Math.floor(d / 60);
+			let m = d % 60;
+			d = Math.floor(d / 60);
+			let h = d % 24;
+			d = Math.floor(d / 24);
+			// let out = `${d.toString().padStart(2,'0')} - ${h.toString().padStart(2,'0')} - ${m.toString().padStart(2,'0')} - ${s.toString().padStart(2,'0')}`;
+			let out = `
+	<div><p>${d.toString().padStart(2,'0')}</p><p>jours</p></div><p>:</p>
+	<div><p>${h.toString().padStart(2,'0')}</p><p>heures</p></div><p>:</p>
+	<div><p>${m.toString().padStart(2,'0')}</p><p>minutes</p></div><p>:</p>
+	<div><p>${s.toString().padStart(2,'0')}</p><p>secondes</p></div>`;
+			if(display != out) {
+				display = out;
+				//console.log(out)
+				container.innerHTML = out
+			}
+			requestAnimationFrame(refresh);
+		}
+		requestAnimationFrame(refresh);
+	})(1726252200000) // 13 sept 2024 20h30 Paris
 });
 
 function generateGraph() {
@@ -879,6 +908,5 @@ function generateGraph() {
 
 	// Ajoutez le SVG à la page
 	document.body.appendChild(svg);
-
 
 }

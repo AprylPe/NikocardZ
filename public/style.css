@@ -57,7 +57,7 @@ header {
 	padding: 20px 16px;
 	margin: 0 0 20px 0;
 	border-bottom: solid 1px #000;
-	position: sticky;
+	/*position: sticky;*/
 	top: 0;
 	z-index: 20;
 }
@@ -97,13 +97,14 @@ header nav div {
 	align-items: center;
 }
 
-@media (max-width: 660px) {
+@media (max-width: 760px) {
 	header nav div {
 		margin: 4px 0;
 		width: 100%;
 	}
 	header h1 {
 		font-size: 28px;
+		flex-direction: column;
 	}
 	header {
 		padding: 12px;
@@ -406,7 +407,7 @@ img:hover + .card-count {
 	100% { background-position-x: 24px; }
 }
 
-@media (max-width: 660px) {
+@media (max-width: 760px) {
 	.album-page-grid {
 		gap: 1vh;
 		width: 45.5vh;
@@ -553,7 +554,7 @@ div.stats {
 }
 
 
-@media (max-width: 660px) {
+@media (max-width: 760px) {
 	div.stats {
 		flex-direction: column;
 		align-items: center;
@@ -776,7 +777,7 @@ div.stats {
 .classement .me {
 	border: solid 2px #f22;
 }
-@media (max-width: 660px) {
+@media (max-width: 760px) {
 	.classement table {
 		font-size: 14px;
 	}
@@ -833,7 +834,6 @@ div.stats {
 }
 
 #page-2.album-page .card,
-#page-6.album-page .card,
 #page-7.album-page .card,
 #page-8.album-page .card,
 #page-9.album-page .card {
@@ -841,11 +841,10 @@ div.stats {
 	max-width: 17.4vh;
 }
 #page-2 .card-count,
-#page-6 .card-count,
 #page-7 .card-count,
 #page-8 .card-count,
 #page-9 .card-count {
-	margin: 22vh 6px 0 0;
+	margin: 19vh 6px 0 0;
 }
 #card-22, #card-37, #card-52 {
 	grid-column: 1;
@@ -1126,3 +1125,40 @@ div.stats {
 #btnp:hover {
    background: linear-gradient(161deg, #e9ff0d, #fa970a, #e6ff0d);
 }
+
+
+.timer {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    padding: 4px;
+    width: 280px
+}
+.timer>p {
+    font-weight: 700;
+    margin: 0;
+    font-size: 14px
+}
+#timer {
+    display: flex;
+    gap: 6px;
+    align-items: center
+}
+#timer p {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0
+}
+#timer>div {
+    background: var(--secondary);
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 0
+}
+#timer>div p:last-child {
+    font-size: 14px;
+    font-variant: all-petite-caps
+}
+
