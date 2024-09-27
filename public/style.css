@@ -1165,3 +1165,15 @@ div.stats {
 #cagnotte p {
     margin: 0;
 }
+@media screen and (min-width: 1120px) {
+	#cagnotte {
+		margin: 0 0 -40px 0;
+	}
+}
+
+@media screen and (max-width: 760px) {
+	#cagnotte {
+		display: none;
+	}
+}
+
