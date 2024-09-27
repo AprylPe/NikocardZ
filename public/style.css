@@ -1162,3 +1162,6 @@ div.stats {
     font-variant: all-petite-caps
 }
 
+#cagnotte p {
+    margin: 0;
+}

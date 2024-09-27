@@ -876,11 +876,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 		let i = 0;
 		for(i = 0; i < steps.length && amount > steps[i].goal; i++) {}
 		document.getElementById("cagnotte").innerHTML = `
-			<p style="">Collecte de fonds pour réaliser le jeu<p>
-			<p style="">Silence, ça tourne !</p>
-			<p style="">Palier ${i + 1}: ${steps[i].name}</p>
-			<div id="cagnotteprog" class="progress"><div style="width: ${Math.floor(100 * amount / steps[i].goal)}%"></div></div>
-			<a href="https://fr.ulule.com/silence-ca-tourne/" target="_blank"><button>Découvrir
+			<p style="font-size: 12px;">Collecte de fonds pour réaliser le jeu<p>
+			<p style="font-size: 32px;">Silence, ça tourne !</p>
+			<p style="font-size: 32px;">${amount} €</p>
+			<p style="font-size: 16px; margin-top: 8px;">Palier ${i + 1}: ${steps[i].name}</p>
+			<div id="cagnotteprog" class="progress" style="height: 12px; margin: 0 0 8px 0;"><div style="width: ${Math.floor(100 * amount / steps[i].goal)}%"></div></div>
+			<a href="https://fr.ulule.com/silence-ca-tourne/" target="_blank"><button style="margin: auto; justify-content: center;">Découvrir
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
 					<path d="M5 3H1v8H9V7m2-2V1H7m4 0L6 6" stroke="#FFF5ED" stroke-width="1" fill="none"/>
 				</svg>
