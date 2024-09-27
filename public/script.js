@@ -841,7 +841,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 	let intervalId = setInterval(checkCagnotte, 10000);
 
 	async function checkCagnotte() {
-		const response = await fetch("https://api.ulule.com/v1/projects/193689");
+		const response = await fetch("https://tomaijerrie.vercel.app/api/ulule");
 		const data = await response.json();
 
 		const currentDate = new Date();
